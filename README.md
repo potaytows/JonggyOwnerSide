@@ -1,5 +1,5 @@
 
-# Jongy Owner Side
+# Jongy Owner-Side
 This is an owner-side application for Jongy
 
 
