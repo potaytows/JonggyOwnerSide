@@ -35,34 +35,28 @@ const Index = ({ navigation }) => {
     return (
         <SafeAreaView style={container}>
             <View style={styles.wrapper}>
-
             </View>
             <View style={header}>
                 <Text style={headerTitle}>
                     หน้าหลัก
                 </Text>
-
             </View>
-
             <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center'}}>
                 <TouchableOpacity onPress={() => navigation.navigate("Tables",{restaurant_id:restaurant._id})}>
                     <View style={{ height: 150 }}>
                         <View style={styles.item}>
-
                         </View>
                         <Text style={styles.itemTitle}>จัดการโต๊ะ</Text>
-
-
                     </View>
-
                 </TouchableOpacity>
-
-
+                <TouchableOpacity onPress={() => navigation.navigate("Menus",{restaurant_id:restaurant._id})}>
+                    <View style={{ height: 150 }}>
+                        <View style={styles.item}>
+                        </View>
+                        <Text style={styles.itemTitle}>เพิ่มเมนู</Text>
+                    </View>
+                </TouchableOpacity>
             </View>
-
-
-
-
         </SafeAreaView>
 
 

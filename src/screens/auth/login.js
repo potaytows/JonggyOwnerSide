@@ -4,7 +4,8 @@ import { useSharedValue } from 'react-native-reanimated';
 import * as SecureStore from 'expo-secure-store';
 import Dragable from '../../components/dragable';
 import React, { useEffect, useState } from 'react';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import axios from 'axios';
+import { useFocusEffect,StackActions  } from '@react-navigation/native';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
@@ -13,7 +14,7 @@ const Login = ({ navigation }) => {
     const [password, setPassword] = useState("");
 
     const showLoginfailToast =()=>{
-        ToastAndroid.showWithGravityAndOffset('you are not authorized.',ToastAndroid.LONG,ToastAndroid.BOTTOM,25,50)
+        ToastAndroid.showWithGravityAndOffset('รหัสผ่านของคุณผิดพลาด.',ToastAndroid.LONG,ToastAndroid.BOTTOM,25,50)
     }
     useEffect(() => {
 
@@ -23,20 +24,15 @@ const Login = ({ navigation }) => {
     
     const AuthCecker = async ()=>{
         try {
-            const fetchOptions={
-                method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body: JSON.stringify({username:username,password:password})
-            };
-            const response = await fetch(apiheader + '/users/Auth/owner',fetchOptions);
-            const result = await response.json();
-            console.log(result.status);
+            const response = await axios.post(apiheader + '/users/Auth/owner',{username:username,password:password});
+            const result = await response.data;
+            console.log(result);
             if(result.status == "auth failed"){
                 showLoginfailToast();
                 console.log("auth did fail")
             }if(result.status == "auth success"){
                 await SecureStore.setItemAsync('userAuth',JSON.stringify(result.obj));
-                navigation.navigate('Tabs')
+                navigation.dispatch(StackActions.replace('Tabs'));
                 
 
             }
