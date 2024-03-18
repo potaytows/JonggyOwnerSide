@@ -63,7 +63,7 @@ const Index = ({ navigation }) => {
 
                         <View style={styles.item}>
                         </View>
-                        <Text style={styles.itemTitle}>การจองทั้งหมด</Text>
+                        <Text style={styles.itemTitle}>การจอง</Text>
                     </View>
 
                 </TouchableOpacity>
