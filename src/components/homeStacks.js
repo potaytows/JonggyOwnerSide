@@ -5,6 +5,8 @@ import Index from '../screens/index'
 import Menus from '../screens/menus'
 import Menu from '../screens/menu'
 import AddMenu from '../screens/addMenu'
+import AllReservations from '../screens/allreservations'
+
 
 const Stack = createStackNavigator();
 
@@ -18,6 +20,8 @@ const Stacks = () => {
         <Stack.Screen name="Menus"  component={Menus} />
         <Stack.Screen name="addMenus"  component={AddMenu} />
         <Stack.Screen name="Menu"  component={Menu} options={{title:"แก้ไขเมนู"}} />
+        <Stack.Screen name="allReservations"  component={AllReservations} options={{title:"การจองทั้งหมด"}} />
+
 
 
         

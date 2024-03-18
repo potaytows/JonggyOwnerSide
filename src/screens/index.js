@@ -10,17 +10,17 @@ const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
 const Index = ({ navigation }) => {
     const { container, header, headerTitle, } = styles
-    const [restaurant,setRestaurant] = useState({});
+    const [restaurant, setRestaurant] = useState({});
 
     const getRestaurantbyUsername = async () => {
         try {
             const userauth = await SecureStore.getItemAsync('userAuth');
             const username = JSON.parse(userauth)
-            const response = await fetch(apiheader + '/restaurants/getByUsername/' + username.username );
+            const response = await fetch(apiheader + '/restaurants/getByUsername/' + username.username);
             const result = await response.json();
             console.log(result);
             setRestaurant(result)
-            
+
         } catch (error) {
             console.error(error);
         }
@@ -34,28 +34,40 @@ const Index = ({ navigation }) => {
 
     return (
         <SafeAreaView style={container}>
-            <View style={styles.wrapper}>
-            </View>
             <View style={header}>
                 <Text style={headerTitle}>
                     หน้าหลัก
                 </Text>
             </View>
-            <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center'}}>
-                <TouchableOpacity onPress={() => navigation.navigate("Tables",{restaurant_id:restaurant._id})}>
-                    <View style={{ height: 150 }}>
-                        <View style={styles.item}>
-                        </View>
+            <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap',alignItems:'center',justifyContent:'center' }}>
+                <TouchableOpacity onPress={() => navigation.navigate("Tables", { restaurant_id: restaurant._id })}>
+                    <View>
+
+                        <View style={styles.item}></View>
                         <Text style={styles.itemTitle}>จัดการโต๊ะ</Text>
+
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate("Menus",{restaurant_id:restaurant._id})}>
-                    <View style={{ height: 150 }}>
+                <TouchableOpacity onPress={() => navigation.navigate("Menus", { restaurant_id: restaurant._id })}>
+                    <View >
+
                         <View style={styles.item}>
                         </View>
                         <Text style={styles.itemTitle}>เพิ่มเมนู</Text>
                     </View>
+
                 </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => navigation.navigate("allReservations", { restaurant_id: restaurant._id })}>
+                    <View >
+
+                        <View style={styles.item}>
+                        </View>
+                        <Text style={styles.itemTitle}>การจองทั้งหมด</Text>
+                    </View>
+
+                </TouchableOpacity>
+
             </View>
         </SafeAreaView>
 
@@ -66,6 +78,7 @@ const Index = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
+        flex: 1
     }, header: {
         backgroundColor: '#ff8a24',
         height: 90,
@@ -97,7 +110,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     }, ownerTitle: {
         textAlign: 'center',
-        flexWrap:"wrap"
+        flexWrap: "wrap"
 
     }
 });
