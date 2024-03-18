@@ -22,8 +22,7 @@ const App = () => {
     try {
       user = await SecureStore.getItemAsync('userAuth');
       setUserAuth(user)
-      console.log(UserAuth)
-      console.log(process.env.EXPO_PUBLIC_apiURI)
+      console.log(user)
     } catch (e) {
       console.log(e)
     }finally{
@@ -39,7 +38,7 @@ const App = () => {
 
 
   if (!isLoading) {
-    if (UserAuth == "") {
+    if (UserAuth == null) {
       return (
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: '#ff8a24', }, headerTintColor: 'white' }}>
