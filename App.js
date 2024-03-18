@@ -10,21 +10,25 @@ const Stack = createStackNavigator();
 
 const App = () => {
   const [UserAuth, setUserAuth] = useState((""));
+  const [isLoading, setisLoading] = useState(false);
+
 
 
 
 
   const getLoginInformation = async () => {
 
+    setisLoading(true)
     try {
       user = await SecureStore.getItemAsync('userAuth');
       setUserAuth(user)
       console.log(UserAuth)
       console.log(process.env.EXPO_PUBLIC_apiURI)
-
     } catch (e) {
       console.log(e)
-    };
+    }finally{
+      setisLoading(false)
+    }
   };
 
   useEffect(() => {
@@ -34,34 +38,30 @@ const App = () => {
   }, []);
 
 
-
-  if (UserAuth == "") {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: '#ff8a24', }, headerTintColor: 'white' }}>
-
-          <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-          <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
-
-        </Stack.Navigator>
-      </NavigationContainer>
-
-    )
-
-  } else {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: '#ff8a24', }, headerTintColor: 'white' }}>
-          <Stack.Screen name="Tabs" component={Tabs} options={({ route })=>({ headerShown: false})} />
-          <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-
-        </Stack.Navigator>
-      </NavigationContainer>
-    )
-
+  if (!isLoading) {
+    if (UserAuth == "") {
+      return (
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: '#ff8a24', }, headerTintColor: 'white' }}>
+            <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+            <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      )
+    } else {
+      return (
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: '#ff8a24', }, headerTintColor: 'white' }}>
+            <Stack.Screen name="Tabs" component={Tabs} options={({ route }) => ({ headerShown: false })} />
+            <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      )
+    }
   }
 
 }
+
 
 
 export default App
