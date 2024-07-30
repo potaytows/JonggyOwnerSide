@@ -1,11 +1,11 @@
-    import { Text, View, SafeAreaView, StyleSheet, StatusBar, FlatList, TextInput, ActivityIndicator, ToastAndroid,TouchableOpacity, Image } from 'react-native'
+import { Text, View, SafeAreaView, StyleSheet, StatusBar, FlatList, TextInput, ActivityIndicator, ToastAndroid, TouchableOpacity, Image } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import * as SecureStore from 'expo-secure-store';
 import Dragable from '../../components/dragable';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useFocusEffect,StackActions  } from '@react-navigation/native';
+import { useFocusEffect, StackActions } from '@react-navigation/native';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
@@ -13,37 +13,37 @@ const Login = ({ navigation }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const showLoginfailToast =()=>{
-        ToastAndroid.showWithGravityAndOffset('รหัสผ่านของคุณผิดพลาด.',ToastAndroid.LONG,ToastAndroid.BOTTOM,25,50)
-    }
+
     useEffect(() => {
 
 
     }, []);
 
-    
-    const AuthCecker = async ()=>{
+
+    const AuthCecker = async () => {
         try {
-            const response = await axios.post(apiheader + '/users/Auth/owner',{username:username,password:password});
+            const response = await axios.post(apiheader + '/users/Auth/owner', { username: username, password: password });
             const result = await response.data;
             console.log(result);
-            if(result.status == "auth failed"){
-                showLoginfailToast();
+            if (result.status == "auth failed") {
+                ToastAndroid.showWithGravityAndOffset('รหัสผ่านของคุณผิดพลาด.', ToastAndroid.SHORT, ToastAndroid.BOTTOM, 25, 50);
                 console.log("auth did fail")
-            }if(result.status == "auth success"){
-                await SecureStore.setItemAsync('userAuth',JSON.stringify(result.obj));
+            } if (result.status == "auth success") {
+                await SecureStore.setItemAsync('userAuth', JSON.stringify(result.obj));
                 navigation.dispatch(StackActions.replace('Tabs'));
-                
+                ToastAndroid.showWithGravityAndOffset('เข้าสู่ระบบสำเร็จ!', ToastAndroid.SHORT, ToastAndroid.BOTTOM, 25, 50);
+
+
 
             }
-            
+
         } catch (error) {
             console.error(error);
         }
 
     }
 
-    
+
 
     return (
         <View style={styles.container}>

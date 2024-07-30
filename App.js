@@ -9,7 +9,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 const Stack = createStackNavigator();
 
 const App = () => {
-  const [UserAuth, setUserAuth] = useState((""));
+  const [UserAuth, setUserAuth] = useState((null));
   const [isLoading, setisLoading] = useState(false);
 
 

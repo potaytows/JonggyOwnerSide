@@ -7,7 +7,7 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import AutoHeightImage from 'react-native-auto-height-image'
 
-
+    
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 

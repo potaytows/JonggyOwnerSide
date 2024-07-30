@@ -1,5 +1,6 @@
 import { Text, View, SafeAreaView, StyleSheet, StatusBar, FlatList, TextInput, ActivityIndicator, TouchableOpacity, Image } from 'react-native'
 import React, { useEffect, useState } from 'react';
+import { useFocusEffect, StackActions } from '@react-navigation/native';
 
 import * as SecureStore from 'expo-secure-store';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
@@ -10,7 +11,7 @@ const Index = ({ navigation }) => {
     const ClearLogin =()=>{
         SecureStore.deleteItemAsync('userAuth')
         console.log('cleared Auth')
-        navigation.navigate('Login')
+        navigation.dispatch(StackActions.replace('Login'));
     }
 
     return (

@@ -2,7 +2,6 @@ import React,{ useEffect } from 'react';
 import { PanGestureHandler, GestureHandlerRootView, Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
     runOnJS,
-    useAnimatedGestureHandler,
     useAnimatedStyle,
     useSharedValue,
     clamp
@@ -96,7 +95,7 @@ const Dragable = props => {
 
         <GestureDetector gesture={pan}>
             <Animated.View style={animatedStyle}>
-                <Table name={props.item} key={props.item._id} />
+                <Table item={props.item} key={props.item._id} />
             </Animated.View>
         </GestureDetector>
 
