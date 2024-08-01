@@ -6,6 +6,7 @@ import Tabs from './src/components/Tabs'
 import * as SecureStore from 'expo-secure-store';
 import Login from './src/screens/auth/login';
 import { createStackNavigator } from '@react-navigation/stack';
+import Stacks from './src/components/homeStacks';
 const Stack = createStackNavigator();
 
 const App = () => {
