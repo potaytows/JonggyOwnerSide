@@ -11,12 +11,12 @@ const NotificationScreen = () => {
     const [notifications, setNotifications] = useState([]);
     const navigation = useNavigation();
 
-
+    
     useFocusEffect(
         React.useCallback(() => {
             const fetchNotifications = async () => {
                 try {
-                    const response = await axios.get(apiheader+'/chat/notifications');
+                    const response = await axios.get(`${apiheader}/chat/notifications`);
                     setNotifications(response.data.notifications);
                 } catch (error) {
                     console.error(error);
@@ -25,7 +25,7 @@ const NotificationScreen = () => {
 
             fetchNotifications();
 
-
+      
             return () => {
                 setNotifications([]);
             };
@@ -35,18 +35,8 @@ const NotificationScreen = () => {
         navigation.navigate('Chat', { reservationID });
     };
 
-    console.log( notifications)
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.FlexShow}>
-                <TouchableOpacity style={styles.show}>
-                    <Text style={styles.butShowChat}>แชท</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.show}>
-                    <Text style={styles.butShowNews}>การแจ้งเตือน</Text>
-                </TouchableOpacity>
-            </View>
-
             <ScrollView>
                 {notifications.map((notification) => (
                     <TouchableOpacity
@@ -56,12 +46,9 @@ const NotificationScreen = () => {
                     >
                         <View style={styles.notificationContent}>
                             <Text style={styles.idReserve}>รหัสการจอง: {notification.reservationID}</Text>
-                            <Text style={styles.nameUser}>ชื่อผู้จอง: {notification.username}</Text>
+                            <Text style={styles.nameUser}>{notification.username}</Text>
                             <View style={styles.flexNotiChat}>
-                                <Text style={[styles.newMessage,
-                                    notification.readStatus === 'notRead' && {fontWeight: 'bold', },
-                                    notification.readStatus === 'ReadIt' && {fontWeight: 'bold', color:'#999999'}
-                                ]}>{notification.lastMessage}</Text>
+                                <Text style={styles.newMessage}>{notification.lastMessage}</Text>
                                 <Text style={styles.timestamp}>
                                     {notification.timestamp
                                         ? new Date(notification.timestamp).toLocaleDateString(undefined, {
@@ -98,38 +85,17 @@ const styles = StyleSheet.create({
     notificationContent: {
         flexDirection: 'column',
     },
-
+    
+    newMessage:{
+        fontWeight: 'bold',
+    },
     timestamp: {
         color: 'gray',
-        marginLeft: 10
-
+        marginLeft:10
+        
     },
-    flexNotiChat: {
-        flexDirection: 'row',
-        marginTop:5
-    },
-    FlexShow: {
-        flexDirection: 'row'
-    },
-    show: {
-        flex: 1,
-    },
-    butShowChat: {
-        backgroundColor: '#ff8a24',
-        color: 'white',
-        textAlign: 'center',
-        padding:10,
-        margin:5,
-        borderRadius:50,
-        fontWeight:'bold'
-    },
-    butShowNews: {
-        backgroundColor: '#bdbdbd',
-        color: '#474646',
-        textAlign: 'center',
-        padding:10,
-        margin:5,
-        borderRadius:50
+    flexNotiChat:{
+        flexDirection:'row'
     }
 });
 

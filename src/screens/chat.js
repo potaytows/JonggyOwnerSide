@@ -4,7 +4,8 @@ import io from 'socket.io-client';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
-import FlashMessage, { showMessage } from 'react-native-flash-message';
+import { reduce } from 'lodash';
+
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 const socket = io(apiheader);
 
@@ -31,46 +32,38 @@ const ChatScreen = ({ route }) => {
         fetchChatMessages();
     }, [reservationID]);
 
-    // useEffect(() => {
-    //     const handleNewMessage = (message) => {
-    //         if (message.sender !== 'restaurant') {
-    //             showMessage({
-    //                 message: `New message from ${message.sender}`,
-    //                 description: message.message,
-    //                 type: "info",
-    //             });
-    //         }
-    //     };
-
-    //     socket.on('message', handleNewMessage);
-
-    //     return () => {
-    //         socket.off('message', handleNewMessage);
-    //     };
-    // }, []);
 
     useFocusEffect(
         React.useCallback(() => {
+            const userType = "restaurant";
             console.log('Joining room:', reservationID);
-            socket.emit('joinRoom', reservationID);
+            socket.emit('joinRoom', reservationID, userType);
 
             socket.on('message', (message) => {
                 console.log('Received message:', message);
                 setMessages(prevMessages => [...prevMessages, message]);
             });
 
+            socket.on('updateMessages', (updatedMessages) => {
+                console.log('Received updated messages:', updatedMessages);
+                setMessages(updatedMessages);
+            });
+
             return () => {
                 console.log('Leaving room:', reservationID);
+                socket.emit('leaveRoom', reservationID);
                 socket.off('message');
+                socket.off('updateMessages');
             };
         }, [reservationID])
     );
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
         if (newMessage.trim()) {
             console.log('Sending message:', newMessage);
             socket.emit('chatMessage', { reservationID, sender: 'restaurant', message: newMessage });
             setNewMessage('');
+            console.log(messages)
             scrollViewRef.current?.scrollToEnd({ animated: true });
         }
     };
@@ -131,15 +124,18 @@ const ChatScreen = ({ route }) => {
                                     <View style={styles.flexChatCalling}>
                                         {item.isLast && (
                                             <View style={styles.image}>
-
+                                               
                                             </View>
                                         )}
                                         {group.isOneOfGroup && (
-                                            <View style={styles.image}></View>
+                                            <View style={styles.image}>
+                                                
+                                            </View>
                                         )}
                                         {!item.isLast && !group.isOneOfGroup && (
                                             <View style={styles.space}></View>
                                         )}
+                                        {/* group.isOneOfGroup && */}
                                         <TouchableOpacity style={styles.chickTime} onPress={() => showTime(item._id)} >
                                             <Text style={[styles.messageText,
                                             item.sender === 'customer' && { backgroundColor: 'grey' },
@@ -151,14 +147,20 @@ const ChatScreen = ({ route }) => {
                                     </View>
                                 )}
                                 {item.sender === 'restaurant' && (
-                                    <TouchableOpacity style={[styles.chickTime, item.sender === 'restaurant' && { marginTop: 10 }]} onPress={() => showTime(item._id)}>
-                                        <Text style={[styles.messageText,
-                                        item.sender === 'customer' && { backgroundColor: 'grey' },
-                                        item.isLast && { borderTopRightRadius: 10 },
-                                        item.isFirst && { borderBottomRightRadius: 10 },
-                                        !group.isOneOfGroup && !item.isFirst && !item.isLast && { borderBottomRightRadius: 10, borderTopRightRadius: 10 }
-                                        ]}>{item.message}</Text>
-                                    </TouchableOpacity>
+                                    <View style={styles.showReadIt}>
+                                        <View style={styles.IsReadIt}>
+                                            {item.readStatus === 'notRead' && (<Text style={styles.ReadText}></Text>)}
+                                            {item.readStatus === 'ReadIt' && (<Text style={styles.ReadText}>อ่านแล้ว</Text>)}
+                                        </View>
+                                        <TouchableOpacity style={styles.chickTime} onPress={() => showTime(item._id)}>
+                                            <Text style={[styles.messageText,
+                                            item.sender === 'customer' && { backgroundColor: 'grey' },
+                                            item.isLast && { borderTopRightRadius: 10 },
+                                            item.isFirst && { borderBottomRightRadius: 10 },
+                                            !group.isOneOfGroup && !item.isFirst && !item.isLast && { borderBottomRightRadius: 10, borderTopRightRadius: 10 }
+                                            ]}>{item.message}</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 )}
                                 {visibleTimestamps[item._id] && (
                                     <Text style={styles.timestamp}>{new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
@@ -250,8 +252,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     image: {
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
         backgroundColor: 'gray',
         borderRadius: 50
     },
@@ -262,12 +264,24 @@ const styles = StyleSheet.create({
     },
     chickTime: {
         justifyContent: 'center',
+        marginTop: 2,
         marginLeft: 5
     },
     space: {
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
         borderRadius: 50
+    },
+    showReadIt: {
+        flexDirection: 'row',
+        alignItems: 'flex-end' 
+    },
+    IsReadIt: {
+    },
+    ReadText: {
+        textAlign: 'center',
+        fontSize: 12,
+        color:'#999999'
     }
 });
 

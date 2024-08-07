@@ -10,16 +10,13 @@ import AllReservations from '../screens/allreservations';
 import OrderListScreen from '../screens/oderList';
 import LocationScreen from '../screens/location';
 import ChatScreen from '../screens/chat';
-import { NotificationProvider } from '../screens/notification';
-import FlashMessage from 'react-native-flash-message';
+
 
 const Stack = createStackNavigator();
 
 const Stacks = () => {
-  const currentRoute = useNavigationState(state => state.routes[state.index]?.name);
 
   return (
-    <NotificationProvider >
       <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: '#ff8a24' }, headerTintColor: 'white' }}>
         <Stack.Screen name="Index" component={Index} options={{ headerShown: false }} />
         <Stack.Screen name="Tables" component={table} />
@@ -31,8 +28,6 @@ const Stacks = () => {
         <Stack.Screen name="location" component={LocationScreen} options={{ title: "Location" }} />
         <Stack.Screen name="Chat" component={ChatScreen} />
       </Stack.Navigator>
-      <FlashMessage position="top" />
-    </NotificationProvider>
   )
 }
 
