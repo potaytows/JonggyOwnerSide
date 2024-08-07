@@ -11,7 +11,6 @@ import OrderListScreen from '../screens/oderList';
 import LocationScreen from '../screens/location';
 import ChatScreen from '../screens/chat';
 
-
 const Stack = createStackNavigator();
 
 const Stacks = () => {
@@ -27,6 +26,7 @@ const Stacks = () => {
         <Stack.Screen name="orderList" component={OrderListScreen} options={{ title: "sssss" }} />
         <Stack.Screen name="location" component={LocationScreen} options={{ title: "Location" }} />
         <Stack.Screen name="Chat" component={ChatScreen} />
+        <Stack.Screen name="EditShapeSize" component={EditShapeSizeScreen} options={{ title: "Edit Shape Size" }}
       </Stack.Navigator>
   )
 }
