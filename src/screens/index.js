@@ -5,7 +5,8 @@ import * as SecureStore from 'expo-secure-store';
 import Dragable from '../components/dragable';
 import React, { useEffect, useState } from 'react';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Entypo from '@expo/vector-icons/Entypo';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
 const Index = ({ navigation }) => {
@@ -43,7 +44,12 @@ const Index = ({ navigation }) => {
                 <TouchableOpacity onPress={() => navigation.navigate("Tables", { restaurant_id: restaurant._id })}>
                     <View>
 
-                        <View style={styles.item}></View>
+                        <View style={styles.item}>
+                            <View style={styles.itemIcon}>
+                        <MaterialIcons name="table-restaurant" size={100} color="white" />
+
+                            </View>
+                        </View>
                         <Text style={styles.itemTitle}>จัดการโต๊ะ</Text>
 
                     </View>
@@ -52,6 +58,11 @@ const Index = ({ navigation }) => {
                     <View >
 
                         <View style={styles.item}>
+                        <View style={styles.itemIcon}>
+                        <MaterialIcons name="restaurant-menu" size={100} color="white" />
+
+                            </View>
+
                         </View>
                         <Text style={styles.itemTitle}>เพิ่มเมนู</Text>
                     </View>
@@ -62,6 +73,11 @@ const Index = ({ navigation }) => {
                     <View >
 
                         <View style={styles.item}>
+                        <View style={styles.itemIcon}>
+                        <Entypo name="list" size={100} color="white" />
+
+                            </View>
+
                         </View>
                         <Text style={styles.itemTitle}>การจอง</Text>
                     </View>
@@ -95,9 +111,14 @@ const styles = StyleSheet.create({
         width: 150,
         height: 150,
         marginTop: 20,
-        marginHorizontal: 15
+        marginHorizontal: 15,
+        justifyContent:'center'
 
-    }, itemTitle: {
+    },
+    itemIcon:{
+        alignSelf:'center',
+    },
+    itemTitle: {
         textAlign: 'center',
         textAlignVertical: 'center',
         fontSize: 15,

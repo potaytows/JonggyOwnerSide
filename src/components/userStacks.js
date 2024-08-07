@@ -4,7 +4,6 @@ import { createStackNavigator } from '@react-navigation/stack'
 import Index from '../screens/userStacks';
 
 
-
 const Stack = createStackNavigator();
 
 const UserStacks = () => {
