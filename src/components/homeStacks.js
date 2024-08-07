@@ -9,6 +9,8 @@ import AllReservations from '../screens/allreservations'
 import OrderListScreen from '../screens/oderList'
 import LocationScreen from '../screens/location'
 import ChatScreen from '../screens/chat'
+import EditShapeSizeScreen from '../screens/EditShapeSize'
+
 
 const Stack = createStackNavigator();
 
@@ -22,8 +24,10 @@ const Stacks = () => {
       <Stack.Screen name="addMenus" component={AddMenu} />
       <Stack.Screen name="Menu" component={Menu} options={{ title: "แก้ไขเมนู" }} />
       <Stack.Screen name="allReservations" component={AllReservations} options={{ title: "การจองทั้งหมด" }} />
-      <Stack.Screen name="orderList" component={OrderListScreen} options={{ title: "sssss" }} />
+      <Stack.Screen name="orderList" component={OrderListScreen} options={{ title: "Order Lists" }} />
       <Stack.Screen name="location" component={LocationScreen} options={{ title: "Location" }} />
+      <Stack.Screen name="EditShapeSize" component={EditShapeSizeScreen} options={{ title: "Edit Shape Size" }} />
+
       <Stack.Screen name="Chat" component={ChatScreen} />
     </Stack.Navigator>
   )

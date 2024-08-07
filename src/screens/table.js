@@ -9,7 +9,7 @@ import ColorPicker, { Panel1, Swatches, Preview, OpacitySlider, HueSlider } from
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
-const Table = ({ route }) => {
+const Table = ({ route, navigation }) => {
     const [obj, setData] = useState([]);
     const [shapeHeight, setShapeHeight] = useState();
     const [shapeWidth, setShapeWidth] = useState();
@@ -53,6 +53,11 @@ const Table = ({ route }) => {
     const closeAddModal = async () => {
         setModalVisible(!modalVisible);
         setNewTableName("");
+
+    }
+    const toEditShapeScreen = async ()=>{
+        navigation.navigate("EditShapeSize",{editShape:edittable,restaurant_id:route.params.restaurant_id})
+        
 
     }
 
@@ -240,6 +245,7 @@ const Table = ({ route }) => {
                         {editModes == "shape" &&
                             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                 <Text>แก้ไขรูปทรง</Text>
+                                <Button title="แก้ไขขนาด" color="blue" onPress={() => toEditShapeScreen()} />
                                 <TextInput
                                     placeholder='Height'
                                     placeholderTextColor='gray'

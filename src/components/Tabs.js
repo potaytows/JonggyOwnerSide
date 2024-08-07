@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import index from '../screens/index';
-import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import homeStacks from './homeStacks';
 import userStacks from './userStacks';
