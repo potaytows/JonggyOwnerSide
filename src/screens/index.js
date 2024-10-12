@@ -8,7 +8,7 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
-
+import Ionicons from '@expo/vector-icons/Ionicons';
 const Index = ({ navigation }) => {
     const { container, header, headerTitle, } = styles
     const [restaurant, setRestaurant] = useState({});
@@ -80,6 +80,20 @@ const Index = ({ navigation }) => {
 
                         </View>
                         <Text style={styles.itemTitle}>การจอง</Text>
+                    </View>
+
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => navigation.navigate("allsetting", { restaurant_id: restaurant._id })}>
+                    <View >
+
+                        <View style={styles.item}>
+                        <View style={styles.itemIcon}>
+                        <Ionicons name="settings-outline" size={100} color="white" />
+                            </View>
+
+                        </View>
+                        <Text style={styles.itemTitle}>ตั่งค่า</Text>
                     </View>
 
                 </TouchableOpacity>

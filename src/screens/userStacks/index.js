@@ -15,11 +15,11 @@ const Index = ({ navigation }) => {
     }
 
     return (
-        <SafeAreaView style={container}>
+        <View style={styles.container}>
             <TouchableOpacity style={styles.button} onPress={ClearLogin} >
                 <Text style={styles.buttonText}>Logout</Text>
             </TouchableOpacity>
-        </SafeAreaView>
+        </View>
 
 
     );
