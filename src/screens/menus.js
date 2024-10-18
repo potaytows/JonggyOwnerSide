@@ -5,7 +5,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 
 import * as SecureStore from 'expo-secure-store';
-import AutoHeightImage from 'react-native-auto-height-image'
 
     
 
@@ -78,7 +77,7 @@ const Menus = ({ navigation }) => {
                             <TouchableOpacity style={{flexDirection:'row'}}onPress={() => navigation.navigate("Menu", { menuid: item._id })} key={index}>
                                 
                                 <View style={styles.flatlist}>
-                                <AutoHeightImage
+                                <Image
                                     width={70}
                                     height={70}
                                     source={{ uri: apiheader + '/image/getMenuIcon/' + item._id }}

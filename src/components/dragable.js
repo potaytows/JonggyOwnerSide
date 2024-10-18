@@ -8,16 +8,16 @@ import Animated, {
 
 
 } from 'react-native-reanimated';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text,TouchableOpacity } from 'react-native';
 import Table from './table';
 import axios from 'axios';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
-const maxBoundX = 160;
-const minBoundX = -160;
-const maxBoundY = 200;
-const minBoundY = -200;
+const maxBoundX = 410;
+const minBoundX = 0;
+const maxBoundY = 400;
+const minBoundY = 0;
 const updateTable = async (xTrans, yTrans, id) => {
     try {
         const response = await axios.put(apiheader + '/tables/edit/' + id, { x: xTrans, y: yTrans });
@@ -37,15 +37,12 @@ const bound = (base, value, min, max) => {
 
 }
 
-const Dragable = props => {
+const Dragable = (props) => {
     const translateX = useSharedValue(props.x);
     const translateY = useSharedValue(props.y);
     const isGestureActive = useSharedValue(false);
-
-
     const pan = Gesture.Pan().runOnJS(true)
         .onStart(() => {
-
             isGestureActive.value = true;
         })
         .onChange((evt) => {
@@ -64,7 +61,6 @@ const Dragable = props => {
             //     newX = roundedX * gridMultiplier;
             //     translateX.value = Math.round(newX);
 
-
             // }
             // if (translateY.value <= maxBoundY && translateY.value >= minBoundY) {
             //     var newY = translateY.value / gridMultiplier;
@@ -80,7 +76,7 @@ const Dragable = props => {
 
         })
     const animatedStyle = useAnimatedStyle(() => {
-        const zIndex = isGestureActive.value ? 1000 : 1;
+        const zIndex = props.item.type=="shape" ? 1 : 100;
         return {
 
             zIndex,
@@ -95,7 +91,10 @@ const Dragable = props => {
 
         <GestureDetector gesture={pan}>
             <Animated.View style={animatedStyle}>
+            <TouchableOpacity activeOpacity={1} style={styles.dragablecontent} key={props.item._id} 
+            onPress={() => {props.showEditModal(props.item); }}>
                 <Table item={props.item} key={props.item._id} />
+            </TouchableOpacity>
             </Animated.View>
         </GestureDetector>
 
@@ -103,6 +102,11 @@ const Dragable = props => {
 };
 
 const styles = StyleSheet.create({
+    dragablecontent: {
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 
 })
 

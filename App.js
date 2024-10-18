@@ -1,4 +1,3 @@
-import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
 import { Text, View, SafeAreaView, StyleSheet, StatusBar, FlatList, TextInput, ActivityIndicator, ToastAndroid, TouchableOpacity, Image, Button, Alert } from 'react-native'
 import { NavigationContainer, useFocusEffect, createNavigationContainerRef } from '@react-navigation/native'
@@ -6,11 +5,21 @@ import Tabs from './src/components/Tabs'
 import * as SecureStore from 'expo-secure-store';
 import Login from './src/screens/auth/login';
 import { createStackNavigator } from '@react-navigation/stack';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import { LogBox } from 'react-native';
 
+LogBox.ignoreLogs(['Warning: ...']);
+LogBox.ignoreAllLogs();
+SplashScreen.preventAutoHideAsync();
 const Stack = createStackNavigator();
 const App = () => {
   const [UserAuth, setUserAuth] = useState((null));
   const [isLoading, setisLoading] = useState(false);
+
+  const [loaded, error] = useFonts({
+    'Kanit-Regular': require('./assets/fonts/Kanit-Regular.ttf'),
+  });
 
 
 
@@ -35,7 +44,16 @@ const App = () => {
 
 
   }, []);
+  
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
 
+  if (!loaded && !error) {
+    return null;
+  }
 
   if (!isLoading) {
     if (UserAuth == null) {

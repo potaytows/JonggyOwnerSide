@@ -1,4 +1,4 @@
-import { Text, View, SafeAreaView, StyleSheet, StatusBar, FlatList, TextInput, ActivityIndicator, TouchableOpacity, Image } from 'react-native'
+import { View, SafeAreaView, StyleSheet, StatusBar, FlatList, TextInput, ActivityIndicator, TouchableOpacity, Image, Switch } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import * as SecureStore from 'expo-secure-store';
@@ -7,19 +7,48 @@ import React, { useEffect, useState } from 'react';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
+import axios from 'axios';
+import Text from '../components/Text';
+import { LinearGradient } from 'expo-linear-gradient';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
 const Index = ({ navigation }) => {
     const { container, header, headerTitle, } = styles
     const [restaurant, setRestaurant] = useState({});
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
     const getRestaurantbyUsername = async () => {
         try {
             const userauth = await SecureStore.getItemAsync('userAuth');
             const username = JSON.parse(userauth)
-            const response = await fetch(apiheader + '/restaurants/getByUsername/' + username.username);
-            const result = await response.json();
+            const response = await axios.get(apiheader + '/restaurants/getByUsername/' + username.username);
+            const result = await response.data;
             console.log(result);
+            setRestaurant(result)
+            if (result.status == "closed") {
+                setIsEnabled(false);
+            } if (result.status == "open") {
+                setIsEnabled(true);
+            }
+            
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    const ToggleRestaurantStatus = async () => {
+        try {
+            const userauth = await SecureStore.getItemAsync('userAuth');
+            const username = JSON.parse(userauth)
+            const response = await axios.post(apiheader + '/restaurants/toggleRestaurantStatus/' + restaurant._id, { username: username.username });
+            const result = await response.data;
+            console.log(result)
+            if (result.status == "closed") {
+                setIsEnabled(false);
+            } if (result.status == "open") {
+                setIsEnabled(true);
+            }
             setRestaurant(result)
 
         } catch (error) {
@@ -35,18 +64,58 @@ const Index = ({ navigation }) => {
 
     return (
         <SafeAreaView style={container}>
-            <View style={header}>
+            <LinearGradient colors={['#FB992C', '#EC7A45']} start={{x:0.2,y:0.8}} style={header}>
                 <Text style={headerTitle}>
-                    หน้าหลัก
+                    JONGGY
                 </Text>
+            </LinearGradient>
+            <View style={styles.restaurantHeader}>
+                <View style={styles.restaurantBanner}>
+
+                    <Image source={{ uri: apiheader + '/image/getRestaurantIcon/' + restaurant._id }} width={100} height={100} style={styles.restaurantimage} />
+                    <View style={styles.restaurantInfo}>
+
+                        <Text style={{ fontSize: 20 }}>{restaurant.restaurantName}</Text>
+                        {isEnabled ?
+                            <View style={{ flexDirection: 'row', alignContent: 'center', alignItems: 'center' }}>
+                                <View style={{ backgroundColor: '#31a24c', width: 15, height: 15, borderRadius: 50 }}></View>
+                                <Text style={{ fontSize: 15,marginLeft:4 }}>กำลังเปิดให้บริการ</Text>
+                            </View>
+
+
+                            :
+                            <View style={{ flexDirection: 'row', alignContent: 'center', alignItems: 'center' }}>
+                                <View style={{ backgroundColor: 'gray', width: 15, height: 15, borderRadius: 50 }}></View>
+                                <Text style={{ fontSize: 15,marginLeft:4 }}>ปิดทำการ</Text>
+                            </View>
+                        }
+
+                        <View style={{ flexWrap: 'wrap' }}>
+
+                            <Switch
+                                trackColor={{ false: '#FFBD59', true: '#FFBD59' }}
+                                thumbColor={isEnabled ? 'white' : 'white'}
+                                ios_backgroundColor="#3e3e3e"
+                                onValueChange={ToggleRestaurantStatus}
+                                value={isEnabled}
+                            />
+
+                        </View>
+                    </View>
+                </View>
+
             </View>
-            <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap',alignItems:'center',justifyContent:'center' }}>
+            <Text style={{fontSize:20,marginLeft:30}}>
+                    รายการ
+                </Text>
+            <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
+
                 <TouchableOpacity onPress={() => navigation.navigate("Tables", { restaurant_id: restaurant._id })}>
                     <View>
 
                         <View style={styles.item}>
                             <View style={styles.itemIcon}>
-                        <MaterialIcons name="table-restaurant" size={100} color="white" />
+                                <MaterialIcons name="table-restaurant" size={100} color="black" />
 
                             </View>
                         </View>
@@ -58,8 +127,8 @@ const Index = ({ navigation }) => {
                     <View >
 
                         <View style={styles.item}>
-                        <View style={styles.itemIcon}>
-                        <MaterialIcons name="restaurant-menu" size={100} color="white" />
+                            <View style={styles.itemIcon}>
+                                <MaterialIcons name="restaurant-menu" size={100} color="black" />
 
                             </View>
 
@@ -73,8 +142,8 @@ const Index = ({ navigation }) => {
                     <View >
 
                         <View style={styles.item}>
-                        <View style={styles.itemIcon}>
-                        <Entypo name="list" size={100} color="white" />
+                            <View style={styles.itemIcon}>
+                                <Entypo name="list" size={100} color="black" />
 
                             </View>
 
@@ -93,35 +162,45 @@ const Index = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
+        backgroundColor: '# ',
         flex: 1
     }, header: {
-        backgroundColor: '#ff8a24',
-        height: 90,
-        justifyContent: 'center'
+        height: 109,
+        justifyContent: 'center',
+        borderBottomLeftRadius:10,
+        borderBottomRightRadius:10
 
     }, headerTitle: {
-        textAlign: 'center',
         color: 'white',
-        fontSize: 20,
+        fontSize: 36,
         fontWeight: 'bold',
+        marginLeft:20,
+        marginTop:45
 
     }, item: {
-        backgroundColor: 'gray',
-        width: 150,
-        height: 150,
+        backgroundColor: 'white',
+        width: 131,
+        height: 131 ,
         marginTop: 20,
         marginHorizontal: 15,
-        justifyContent:'center'
+        justifyContent: 'center',
+        borderRadius:20,
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+        elevation: 5,
 
     },
-    itemIcon:{
-        alignSelf:'center',
+    itemIcon: {
+        alignSelf: 'center',
     },
     itemTitle: {
         textAlign: 'center',
         textAlignVertical: 'center',
-        fontSize: 15,
+        fontSize: 16,
         color: 'black'
 
     }, wrapper: {
@@ -132,6 +211,19 @@ const styles = StyleSheet.create({
     }, ownerTitle: {
         textAlign: 'center',
         flexWrap: "wrap"
+
+    }, restaurantHeader: {
+        height: 150,
+        alignContent: 'center',
+        justifyContent: 'center'
+    }, restaurantBanner: {
+        height: 100,
+        flexDirection: 'row'
+    }, restaurantimage: {
+        borderRadius: 30,
+        marginLeft: 20
+    }, restaurantInfo: {
+        marginLeft: 20
 
     }
 });

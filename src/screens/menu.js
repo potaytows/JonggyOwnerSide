@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, SafeAreaView, StyleSheet, StatusBar, FlatList, Modal, ActivityIndicator, Alert, ToastAndroid, TouchableOpacity, Image, Button, TextInput } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import AutoHeightImage from 'react-native-auto-height-image'
 import { useFocusEffect } from '@react-navigation/native';
 import { EvilIcons } from '@expo/vector-icons';
 import axios from 'axios';
@@ -204,7 +203,7 @@ const Menu = ({ navigation, route }) => {
                 </View>
                 {imageuri &&
                     <View style={styles.image}>
-                        <AutoHeightImage
+                        <Image
                             width={250}
                             height={250}
                             source={{ uri: imageuri }}

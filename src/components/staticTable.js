@@ -1,13 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 
-const table = ({item}) => {
+const table = ({ item }) => {
     const styles = StyleSheet.create({
         container: {
+            left: item.x,
+            top: item.y,
             alignItems: 'center',
             justifyContent: 'center',
-            left:item.x,
-            top:item.y
+            position:'absolute'
         },
         text: {
             color: 'black',
@@ -17,10 +18,10 @@ const table = ({item}) => {
             width: 30
         }, shape: {
             backgroundColor: "orange"
-    
+
         }
     });
-    
+
 
     if (item.type == "table") {
         return (
@@ -46,7 +47,7 @@ const table = ({item}) => {
     // ? backgroundColor:item.color:{}
     if (item.type == "shape") {
         return (
-            <View style={[styles.container,{left:item.x,top:item.y}]}>
+            <View style={[styles.container, { left: item.x, top: item.y }]}>
                 <View style={[styles.shape, { height: item.height, width: item.width, backgroundColor: item.color }]}>
                 </View>
 
