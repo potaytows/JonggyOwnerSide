@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator,Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import axios from 'axios';
 import io from 'socket.io-client';
+import MapViewDirections from 'react-native-maps-directions';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 const socket = io(apiheader);
@@ -18,6 +19,7 @@ const LocationScreen = ({ route, navigation }) => {
             try {
                 const response = await axios.get(`${apiheader}/reservation/getLocationById/${reservation.restaurant_id._id}`);
                 setLocation(response.data);
+
             } catch (error) {
                 console.error(error);
                 Alert.alert('Error', 'Failed to fetch restaurant location');
@@ -29,7 +31,22 @@ const LocationScreen = ({ route, navigation }) => {
         fetchRestaurantLocation();
     }, [reservation]);
 
-    const handleCancelReservation = () => { 
+    useEffect(() => {
+        const fetchLocation = async () => {
+            try {
+                const response = await axios.get(`${apiheader}/reservation/userLocation/${reservation._id}`);
+                if (response.data.locationCustomer) {
+                    setReceivedLocation(response.data.locationCustomer);
+                }
+            } catch (error) {
+                console.error('Error fetching location:', error);
+            }
+        };
+        const intervalId = setInterval(fetchLocation, 5000);
+        return () => clearInterval(intervalId);
+    }, [reservation]);
+
+    const handleCancelReservation = () => {
         Alert.alert(
             "ยกเลิกการจอง",
             "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการจองนี้?",
@@ -121,14 +138,31 @@ const LocationScreen = ({ route, navigation }) => {
                         title={reservation.restaurant_id.restaurantName}
                         description={location.address}
                     />
-                    {receivedLocation && ( 
-                        <Marker
-                            coordinate={{
-                                latitude: receivedLocation.latitude,
-                                longitude: receivedLocation.longitude,
-                            }}
-                            title="Your Location"
-                        />
+                   {receivedLocation && (
+                        <>
+                            <Marker
+                                coordinate={{
+                                    latitude: receivedLocation.latitude,
+                                    longitude: receivedLocation.longitude,
+                                }}
+                            >
+                                <Image source={require('../../assets/images/gpsNavigation.png')} style={{ height: 40, width: 40 }} />
+                            </Marker>
+
+                            <MapViewDirections
+                                origin={{
+                                    latitude: receivedLocation.latitude,
+                                    longitude: receivedLocation.longitude,
+                                }}
+                                destination={{
+                                    latitude: location.coordinates.latitude,
+                                    longitude: location.coordinates.longitude,
+                                }}
+                                apikey='AIzaSyC_fdB6VOZvieVkKPSHdIFhIlVuhhXynyw'
+                                strokeWidth={5}
+                                strokeColor="#FF914D"
+                            />
+                        </>
                     )}
                 </MapView>
             )}

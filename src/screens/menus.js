@@ -5,9 +5,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 
 import * as SecureStore from 'expo-secure-store';
-import AutoHeightImage from 'react-native-auto-height-image'
 
-    
+
+
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
@@ -71,29 +71,31 @@ const Menus = ({ navigation }) => {
             {menusList < 1 && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}><Text>ร้านของคุณยังไม่มีเมนู!</Text></View>}
             <ScrollView>
                 <View>
-                    {menusList != undefined || menusList==[]? menusList.map((item, index) => (
+                    {menusList != undefined || menusList == [] ? menusList.map((item, index) => (
                         menusList && index == undefined ? (
                             <View key={item.id}><Text>ร้านของคุณยังไม่มีเมนู!</Text></View>
                         ) : (
-                            <TouchableOpacity style={{flexDirection:'row'}}onPress={() => navigation.navigate("Menu", { menuid: item._id })} key={index}>
-                                
-                                <View style={styles.flatlist}>
-                                <AutoHeightImage
-                                    width={70}
-                                    height={70}
-                                    source={{ uri: apiheader + '/image/getMenuIcon/' + item._id }}
-                                    borderRadius={5}
-                                />
-                                    <Text style={styles.menuTitle} adjustsFontSizeToFit={true} numberOfLines={2}>
-                                        {item.menuName}
+                            <View style={styles.layoutmenuList}>
+                                <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => navigation.navigate("Menu", { menuid: item._id })} key={index}>
+
+                                    <View style={styles.flatlist}>
+                                        <Image
+                                            width={70}
+                                            height={70}
+                                            source={{ uri: apiheader + '/image/getMenuIcon/' + item._id }}
+                                            borderRadius={5}
+                                        />
+                                        <Text style={styles.menuTitle} adjustsFontSizeToFit={true} numberOfLines={2}>
+                                            {item.menuName}
+                                        </Text>
+
+                                    </View>
+                                    <Text style={styles.menuPrice}>
+                                        ฿{item.price}
                                     </Text>
-                                    
-                                </View>
-                                <Text style={styles.menuPrice}>
-                                    {item.price} $
-                                </Text>
-                                
-                            </TouchableOpacity>
+
+                                </TouchableOpacity>
+                            </View>
                         )
                     )) : <View><Text>กำลังโหลดข้อมูล!</Text></View>}
                 </View>
@@ -106,23 +108,39 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    layoutmenuList: {
+        backgroundColor: 'white',
+        marginTop: 10,
+        padding: 15,
+        marginLeft:20,
+        marginRight:20,
+        borderRadius:10,
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 5,
+    },
     flatlist: {
         flexDirection: "row",
-        marginLeft: 20,
-        marginTop: 20,
-        marginRight: 20,
-        width:'70%'
+        width: '70%'
 
     }, menuTitle: {
         width: 200,
         color: "black",
         fontSize: 15,
-        marginLeft:15
+        marginLeft: 15
 
     }, addButton: {
         backgroundColor: '#ff8a24',
-        width: 120,
-        height: 30,
+        padding:10,
+        paddingLeft:20,
+        paddingRight:20,
+
+        marginRight:20,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
@@ -148,10 +166,10 @@ const styles = StyleSheet.create({
     },
     menuPrice: {
         textAlign: 'right',
-        flex:1,
-        marginLeft: 20,
-        marginTop: 20,
-        marginRight: 20,
+        flex: 1,
+        fontSize:16,
+        color:'#ff8a24'
+       
     }
 
 })

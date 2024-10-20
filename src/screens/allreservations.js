@@ -47,23 +47,20 @@ const AllReservations = ({ navigation, route }) => {
             <View style={styles.loadingindi}>
                 <ActivityIndicator size={"large"} animating={isLoading} style={styles.loadingindi} />
             </View>
-            <View style={styles.topper}></View>
+        
             <ScrollView>
                 <View>
-                    <View style={styles.reserveCon}>
-                        <View style={styles.list}>
-                            <Text style={styles.title1}>รายการจอง</Text>
-                            <Text style={styles.title2}>เวลา</Text>
-                        </View>
-                    </View>
                     {reservationList.length < 1 && (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
                             <Text>ร้านของคุณเงียบมาก ;-;!</Text>
                         </View>
                     )}
                     {reservationList && reservationList.length > 0 ? reservationList.map((item, index) => (
+                        
                         <View key={index}>
-                            <View style={styles.reserveCon}>
+                            <View style={[styles.reserveCon,
+                            item.status === "ยืนยันแล้ว" && {    borderLeftColor:'green'},
+                            item.status === "ยกเลิกการจองแล้ว" && {    borderLeftColor:'gray'}]}>
                                 <View style={styles.ReservationList}>
                                     <View style={styles.FlexReserve}>
                                         <Text style={styles.title3}>การจองที่ {index + 1}</Text>
@@ -71,7 +68,7 @@ const AllReservations = ({ navigation, route }) => {
                                     </View>
 
 
-                                    <Text>โต๊ะ: {item.reservedTables.map(table => table.tableName).join(', ')}</Text>
+                                    <Text style={styles.title5}>โต๊ะ {item.reservedTables.map(table => table.tableName).join(', ')}</Text>
 
                                     <View style={styles.flexstatus}>
                                         <Text style={[styles.statusres, 
@@ -102,9 +99,6 @@ const AllReservations = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
-        marginRight: 10,
-        marginLeft: 10
     },
     list: {
         flexDirection: 'row',
@@ -122,27 +116,42 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     reserveCon: {
-        borderBottomWidth: 5,
-        borderBottomColor: '#EDEDED',
-        
-        marginTop:10
+        padding:10,
+        marginTop:20,
+        marginLeft:20,
+        marginRight:20,
+        borderLeftWidth:10,
+        borderLeftColor:'yellow',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 5,
+        borderRadius: 10,
+        backgroundColor: 'white',
     },
     FlexReserve: {
         flexDirection: 'row',
     },
     title3: {
         width: '50%',
+        fontSize:16
     },
     title4: {
         width: '50%',
         textAlign: 'right',
+    },
+    title5:{
+        fontSize:18
     },
     button: {
         backgroundColor: '#FF914D',
         padding: 10,
         borderRadius: 5,
         alignSelf:'flex-end',
-        marginBottom:10,
         
     },
     buttonText: {

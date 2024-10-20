@@ -1,14 +1,12 @@
 import { Text, View, SafeAreaView, StyleSheet, StatusBar, FlatList, TextInput, ActivityIndicator, TouchableOpacity, Image } from 'react-native'
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useSharedValue } from 'react-native-reanimated';
 import * as SecureStore from 'expo-secure-store';
-import Dragable from '../components/dragable';
 import React, { useEffect, useState } from 'react';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 import Ionicons from '@expo/vector-icons/Ionicons';
+
+
 const Index = ({ navigation }) => {
     const { container, header, headerTitle, } = styles
     const [restaurant, setRestaurant] = useState({});
@@ -40,13 +38,20 @@ const Index = ({ navigation }) => {
                     หน้าหลัก
                 </Text>
             </View>
-            <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap',alignItems:'center',justifyContent:'center' }}>
+            <View style={styles.flexrtLogo}>
+                <View style={styles.boxlogoRes}>
+                    <Image style={styles.logoRes} source={{ uri: apiheader + '/image/getRestaurantIcon/' + restaurant._id }} />
+                </View>
+                <Text style={styles.restaurantname}>{restaurant.restaurantName}</Text>
+            </View>
+            <Text style={styles.title}>รายการ</Text>
+            <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
                 <TouchableOpacity onPress={() => navigation.navigate("Tables", { restaurant_id: restaurant._id })}>
                     <View>
 
                         <View style={styles.item}>
                             <View style={styles.itemIcon}>
-                        <MaterialIcons name="table-restaurant" size={100} color="white" />
+                                <MaterialIcons name="table-restaurant" size={100} color="gray" />
 
                             </View>
                         </View>
@@ -58,8 +63,8 @@ const Index = ({ navigation }) => {
                     <View >
 
                         <View style={styles.item}>
-                        <View style={styles.itemIcon}>
-                        <MaterialIcons name="restaurant-menu" size={100} color="white" />
+                            <View style={styles.itemIcon}>
+                                <MaterialIcons name="restaurant-menu" size={100} color="gray" />
 
                             </View>
 
@@ -73,8 +78,8 @@ const Index = ({ navigation }) => {
                     <View >
 
                         <View style={styles.item}>
-                        <View style={styles.itemIcon}>
-                        <Entypo name="list" size={100} color="white" />
+                            <View style={styles.itemIcon}>
+                                <Entypo name="list" size={100} color="gray" />
 
                             </View>
 
@@ -88,8 +93,8 @@ const Index = ({ navigation }) => {
                     <View >
 
                         <View style={styles.item}>
-                        <View style={styles.itemIcon}>
-                        <Ionicons name="settings-outline" size={100} color="white" />
+                            <View style={styles.itemIcon}>
+                                <Ionicons name="settings-outline" size={100} color="gray" />
                             </View>
 
                         </View>
@@ -107,7 +112,6 @@ const Index = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
         flex: 1
     }, header: {
         backgroundColor: '#ff8a24',
@@ -120,23 +124,63 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
 
-    }, item: {
-        backgroundColor: 'gray',
+    },
+    flexrtLogo: {
+        flexDirection: 'row',
+        marginLeft:20,
+        marginTop:20
+    },
+    boxlogoRes: {
+        width: 70,
+        height: 70,
+        borderRadius: 50,
+        backgroundColor: 'gray'
+    },
+    logoRes: {
+        width: '100%',
+        height: '100%',
+        margin: 'auto',
+        borderRadius: 50,
+    },
+    restaurantname: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        marginLeft: 10
+    },
+    title:{
+        fontSize: 18,
+        marginLeft:25,
+        marginTop:20
+    },
+    item: {
         width: 150,
         height: 150,
         marginTop: 20,
         marginHorizontal: 15,
-        justifyContent:'center'
+        justifyContent: 'center',
+        borderRadius: 20,
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 4,
+        borderRadius: 10,
+        backgroundColor: 'white'
 
     },
-    itemIcon:{
-        alignSelf:'center',
+    itemIcon: {
+        alignSelf: 'center',
     },
     itemTitle: {
         textAlign: 'center',
         textAlignVertical: 'center',
         fontSize: 15,
-        color: 'black'
+        color: 'black',
+        marginTop: 10
 
     }, wrapper: {
         flex: 1,

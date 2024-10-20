@@ -97,7 +97,7 @@ const Menu = ({ navigation, route }) => {
     }
 
     const fetchDeleteMenu = async () => {
-        setLoading(true)    
+        setLoading(true)
         try {
             const result = await axios.delete(apiheader + '/menus/delete/' + Menu._id);
             const res = result.data
@@ -135,23 +135,23 @@ const Menu = ({ navigation, route }) => {
     const ConfirmButton = ({ }) => {
         if (MenuPrice != Menu.price || MenuName != Menu.menuName) {
             return (
-                    <View>
-                        <TouchableOpacity style={styles.editButton} onPress={() => Alert.alert('คุณต้องการแก้ไขหรือไม่ ', 'คุณต้องการแก้ไขข้อมูลของเมนูหรือไม่ ', [
-                            {
-                                text: 'ยกเลิก',
-                            },
-                            { text: 'ยืนยัน', onPress: () => fetchEditMenu() },
-                        ])}>
-                            <Text style={{ color: "white" }}>ยืนยัน</Text>
-                        </TouchableOpacity>
-                    </View>
+                <View>
+                    <TouchableOpacity style={styles.editButton} onPress={() => Alert.alert('คุณต้องการแก้ไขหรือไม่ ', 'คุณต้องการแก้ไขข้อมูลของเมนูหรือไม่ ', [
+                        {
+                            text: 'ยกเลิก',
+                        },
+                        { text: 'ยืนยัน', onPress: () => fetchEditMenu() },
+                    ])}>
+                        <Text style={{ color: "white" }}>ยืนยัน</Text>
+                    </TouchableOpacity>
+                </View>
             )
         }
     };
 
 
     return (
-        
+
         <ScrollView style={{ flex: 1 }}>
             {isLoading && <View style={styles.activityIndicatorBody}>
                 <ActivityIndicator size="large" color='#ff8a24' animating={isLoading} />
@@ -170,20 +170,23 @@ const Menu = ({ navigation, route }) => {
                         }}>
                         <View style={styles.centeredView}>
                             <View style={styles.modalView}>
+                                <View  style={{ width:'100%'}}>
                                 <TextInput
                                     placeholder='ชื่อ Addon'
                                     placeholderTextColor='gray'
-                                    style={styles.input}
+                                    style={styles.inputs}
                                     value={addonName}
                                     onChangeText={text => setAddonName(text)}
                                 />
                                 <TextInput
                                     placeholder='ราคา'
                                     placeholderTextColor='gray'
-                                    style={styles.input}
+                                    style={styles.inputs}
                                     value={addonPrice}
                                     onChangeText={text => setAddonPrice(text)}
                                 />
+                                </View>
+                                <View  style={{flexDirection:'row', marginTop:20}}>
                                 <TouchableOpacity
                                     style={[styles.button, styles.buttonAdd]} onPress={() => { fetchAddAddons(); setModalVisible(!modalVisible); setAddonName(""); setAddonPrice(""); getAddons(); }}>
                                     <Text style={styles.textStyle}>เพิ่ม Addon</Text>
@@ -197,16 +200,16 @@ const Menu = ({ navigation, route }) => {
                                     }}>
                                     <Text style={styles.textStyle}>ยกเลิก</Text>
                                 </TouchableOpacity>
-
+                                </View>
                             </View>
                         </View>
                     </Modal>
                 </View>
                 {imageuri &&
                     <View style={styles.image}>
-                        <AutoHeightImage
-                            width={250}
-                            height={250}
+                        <Image
+                            width={200}
+                            height={200}
                             source={{ uri: imageuri }}
                             borderRadius={5}
                             style={{ alignSelf: 'center' }}
@@ -214,45 +217,51 @@ const Menu = ({ navigation, route }) => {
                     </View>
                 }
                 <View style={styles.textHeader}>
-                    <Text>ชื่อ :</Text>
-                    <TextInput
-                        placeholder='ชื่อเมนู'
-                        placeholderTextColor='gray'
-                        style={styles.input}
-                        value={MenuName}
-                        onChangeText={text => setMenuName(text)}
-                    />
-                    <View>
-                        <Text>ราคา :</Text>
+                    <View style={styles.layoutEditManu}>
+                        <Text>แก้ไขชื่อ</Text>
                         <TextInput
-                            placeholder='ราคา'
+                            placeholder='ชื่อเมนู'
                             placeholderTextColor='gray'
                             style={styles.input}
-                            value={MenuPrice}
-                            onChangeText={text => setMenuPrice(text)}
+                            value={MenuName}
+                            onChangeText={text => setMenuName(text)}
                         />
                     </View>
                     <View>
-                        <TouchableOpacity style={styles.deleteButton} onPress={() => Alert.alert('คุณต้องการลบหรือไม่ ', 'คุณต้องการลบช้อมูลนี้หรือไม่ ', [
-                            {
-                                text: 'ยกเลิก',
-                            },
-                            { text: 'ยืนยัน', onPress: () => fetchDeleteMenu() },
-                        ])}>
-                            <Text style={{ color: "white" }}>ลบ</Text>
-                        </TouchableOpacity>
+                        <View style={styles.layoutEditManuname}>
+                            <TextInput
+                                placeholder='ราคา'
+                                placeholderTextColor='gray'
+                                style={styles.input2}
+                                value={MenuPrice}
+                                onChangeText={text => setMenuPrice(text)}
+                            />
+                        </View>
+
+                    </View>
+                    <View>
+
                     </View>
                 </View>
                 <View style={styles.addonContainer}>
-                    <Text>Addons เพิ่มเติม :</Text>
+                    <Text style={styles.addontitle}>Addons เพิ่มเติม</Text>
+                    <View style={{ flexDirection: "row" }}>
+                        <Text style={styles.addname}>ขื่อ Addons</Text>
+                        <Text style={styles.addprice}>ราคา</Text>
+                        <Text style={styles.addname}></Text>
+                    </View>
+
                     {addon != undefined || addon == [] ? addon.map((item, index) => (
                         addon && index == undefined ? (
                             <View key={item.id}><Text>เมนูนี้ยังไม่มี Addon!</Text></View>
                         ) : (
+
                             <View key={index} style={{ flexDirection: "row" }}>
-                                <Text>{item.AddOnName} {item.price}   </Text>
+                                <Text style={styles.addonList}>{item.AddOnName}</Text>
+                                <Text style={styles.addonList}> {item.price}</Text>
+
                                 <TouchableOpacity onPress={() => { fetchDelete(item._id); }}>
-                                    <Text style={{ color: "red" }}>ลบ</Text>
+                                    <Text style={styles.deleteAddon}>ลบ</Text>
                                 </TouchableOpacity>
 
                             </View>
@@ -261,10 +270,19 @@ const Menu = ({ navigation, route }) => {
                     <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(!modalVisible)}>
                         <Text style={{ color: "white" }}>เพิ่ม Addon</Text>
                     </TouchableOpacity>
-                    <ConfirmButton />
+                   
                 </View>
-
-
+                <View style={styles.ButtonContainer}>
+                <ConfirmButton />
+                    <TouchableOpacity style={styles.deleteButton} onPress={() => Alert.alert('คุณต้องการลบหรือไม่ ', 'คุณต้องการลบช้อมูลนี้หรือไม่ ', [
+                        {
+                            text: 'ยกเลิก',
+                        },
+                        { text: 'ยืนยัน', onPress: () => fetchDeleteMenu() },
+                    ])}>
+                        <Text style={{ color: "white" }}>ลบ</Text>
+                    </TouchableOpacity>
+                </View>
             </SafeAreaView>
 
         </ScrollView>
@@ -275,7 +293,6 @@ const Menu = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
     },
     loadingindi: {
         position: 'absolute',
@@ -285,7 +302,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     }, textHeader: {
-        marginLeft: 30,
+
         marginTop: 30,
     }, restaurantname: {
         fontSize: 25
@@ -293,24 +310,135 @@ const styles = StyleSheet.create({
         fontSize: 13,
 
     }, image: {
-        width: 250,
-        height: 250,
         alignContent: "center",
         justifyContent: 'center',
         alignSelf: 'center',
-    }, addonContainer: {
-        margin: 30
-    }, addButton: {
+
+    }, 
+    ButtonContainer:{
+        flexDirection:'row',
+        marginLeft: 20,
+        marginRight:20,
+        padding: 20,
+        borderRadius: 10,
+        backgroundColor: 'white',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 5,
+    },
+    addonContainer: {
+        margin: 20,
+        marginTop: 10,
+        padding: 20,
+        borderRadius: 10,
+        backgroundColor: 'white',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 5,
+
+    },
+    addontitle: {
+        textAlign: 'center',
+        fontSize: 16,
+    },
+    addonList: {
+        flex: 1,
+        marginTop: 10,
+        fontSize: 16
+    },
+    deleteAddon: {
+        fontSize: 16,
+        marginTop: 10,
+        color: 'red'
+
+    },
+    addname: {
+        flex: 1,
+        fontSize: 16,
+        color: 'gray',
+        marginTop: 10,
+
+
+
+    },
+    addprice: {
+        flex: 1,
+        fontSize: 16,
+        color: 'gray',
+        marginTop: 10,
+        textAlign: 'center'
+
+    },
+    inputs:{
+        marginTop:10,
+        padding:10,
+        borderRadius:10,
+        backgroundColor: 'white',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 5,
+    },
+
+    addButton: {
+        marginTop: 10,
         backgroundColor: '#ff8a24',
-        width: 120,
-        height: 30,
+        padding: 10,
+        paddingLeft: 20,
+        paddingRight: 20,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
 
     },
+    layoutEditManuname: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        padding: 10,
+        marginLeft: 20,
+        marginRight: 20,
+        borderRadius: 10,
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
 
+        elevation: 5,
+        marginTop: 10
+    },
+    layoutEditManu: {
+        backgroundColor: 'white',
+        padding: 10,
+        marginLeft: 20,
+        marginRight: 20,
+        borderRadius: 10,
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
 
+        elevation: 5,
+    },
     modalView: {
         margin: 20,
         backgroundColor: 'white',
@@ -328,7 +456,7 @@ const styles = StyleSheet.create({
         width: "80%"
     },
     button: {
-        borderRadius: 20,
+        borderRadius: 10,
         padding: 10,
         elevation: 2,
     },
@@ -337,10 +465,17 @@ const styles = StyleSheet.create({
     },
     buttonClose: {
         backgroundColor: 'red',
-        marginTop: 5
+        padding:10,
+        paddingLeft:20,
+        paddingRight:20,
+        marginLeft:10
     },
     buttonAdd: {
         backgroundColor: 'green',
+        padding:10,
+        paddingLeft:20,
+        paddingRight:20
+    
 
     },
     textStyle: {
@@ -357,14 +492,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 22,
     }, input: {
-        borderWidth: 1,
-        color: 'black',
-        borderColor: 'black',
-        borderRadius: 5,
-        width: '80%',
-        padding: 10,
+        borderWidth: 0,
         marginBottom: 10,
-        alignSelf: 'center',
         marginTop: 10
     }, editButton: {
         backgroundColor: '#ff8a24',
@@ -390,6 +519,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
+        marginLeft:10
 
     }
 
