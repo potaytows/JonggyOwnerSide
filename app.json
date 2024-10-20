@@ -21,9 +21,11 @@
       }
     },
     "android": {
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+
       },
       "permissions": [
         "ACCESS_FINE_LOCATION",
@@ -38,9 +40,11 @@
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
-        }
-      ],
-      "expo-font"
+        },
+        "expo-font",{
+        "fonts":["/assets/fonts/Kanit-Regular.ttf"]
+      }
+      ]
     ]
   }
 }

@@ -67,7 +67,7 @@ const OrderListScreen = ({ route, navigation }) => {
             <View style={styles.details}>
                 <Text>รหัสการจอง: {reservation._id}</Text>
                 <Text>เวลา: {reservation.createdAt}</Text>
-                <Text>โต๊ะ: {reservation.reservedTables.map(table => table.tableName).join(', ')}</Text>
+                <Text>โต๊ะ: {reservation.reservedTables.map(table => table.text).join(', ')}</Text>
                 {/* Add more details as needed */}
             </View>
             <TouchableOpacity style={styles.button} onPress={handleConfirmReservation}>
