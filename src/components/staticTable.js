@@ -1,14 +1,15 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-const table = ({ item }) => {
+const table = ({ item, changeStatus }) => {
     const styles = StyleSheet.create({
         container: {
             left: item.x,
             top: item.y,
             alignItems: 'center',
             justifyContent: 'center',
-            position:'absolute'
+            position: 'absolute'
         },
         text: {
             color: 'black',
@@ -18,27 +19,49 @@ const table = ({ item }) => {
             width: 30
         }, shape: {
             backgroundColor: "orange"
-
         }
     });
 
 
     if (item.type == "table") {
-        return (
-            <View style={[styles.container]}>
-                <Image
-                    source={require('../../assets/images/table.png')}
-                    borderRadius={5}
-                    style={styles.image}
-                />
-                <Text style={styles.text}>{item.text}</Text>
-            </View>
-        );
+        if (item.status == "enabled") {
+            return (
+                <TouchableOpacity onPress={() => {
+                    changeStatus(item)
+
+                }} style={[styles.container, { zIndex: 100 }]}>
+                    <Image
+                        source={require('../../assets/images/table.png')}
+                        borderRadius={5}
+                        style={styles.image}
+                    />
+                    <Text style={styles.text}>{item.text}</Text>
+                </TouchableOpacity>
+            );
+
+        }
+        if (item.status == "disabled") {
+            return (
+                <TouchableOpacity onPress={() => {
+                    changeStatus(item)
+                }} style={[styles.container, { zIndex: 100 }]}>
+                    <Image
+                        source={require('../../assets/images/table.png')}
+                        borderRadius={5}
+                        style={styles.image}
+                        tintColor={"gray"}
+                    />
+                    <Text style={styles.text}>{item.text}</Text>
+                </TouchableOpacity>
+            );
+
+        }
+
 
     }
     if (item.type == "text") {
         return (
-            <View style={[styles.container]}>
+            <View style={[styles.container, { zIndex: 100 }]}>
                 <Text style={styles.text}>{item.text}</Text>
             </View>
         );
@@ -47,9 +70,7 @@ const table = ({ item }) => {
     // ? backgroundColor:item.color:{}
     if (item.type == "shape") {
         return (
-            <View style={[styles.container, { left: item.x, top: item.y }]}>
-                <View style={[styles.shape, { height: item.height, width: item.width, backgroundColor: item.color }]}>
-                </View>
+            <View style={[styles.shape, { left: item.x, top: item.y, height: item.height, width: item.width, backgroundColor: item.color, zIndex: -20 }]}>
 
             </View>
         );
