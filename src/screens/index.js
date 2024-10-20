@@ -11,7 +11,7 @@ import axios from 'axios';
 import Text from '../components/Text';
 import { LinearGradient } from 'expo-linear-gradient';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
-
+import Ionicons from '@expo/vector-icons/Ionicons';
 const Index = ({ navigation }) => {
     const { container, header, headerTitle, } = styles
     const [restaurant, setRestaurant] = useState({});
@@ -149,6 +149,20 @@ const Index = ({ navigation }) => {
 
                         </View>
                         <Text style={styles.itemTitle}>การจอง</Text>
+                    </View>
+
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => navigation.navigate("allsetting", { restaurant_id: restaurant._id })}>
+                    <View >
+
+                        <View style={styles.item}>
+                        <View style={styles.itemIcon}>
+                        <Ionicons name="settings-outline" size={100} color="white" />
+                            </View>
+
+                        </View>
+                        <Text style={styles.itemTitle}>ตั่งค่า</Text>
                     </View>
 
                 </TouchableOpacity>
