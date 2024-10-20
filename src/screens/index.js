@@ -1,10 +1,8 @@
-import { View, SafeAreaView, StyleSheet, StatusBar, FlatList, TextInput, ActivityIndicator, TouchableOpacity, Image, Switch } from 'react-native'
+import { Text, View, SafeAreaView, StyleSheet, StatusBar, FlatList, TextInput, ActivityIndicator, TouchableOpacity, Image } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import * as SecureStore from 'expo-secure-store';
-import Dragable from '../components/dragable';
 import React, { useEffect, useState } from 'react';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import axios from 'axios';
@@ -12,6 +10,8 @@ import Text from '../components/Text';
 import { LinearGradient } from 'expo-linear-gradient';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 import Ionicons from '@expo/vector-icons/Ionicons';
+
+
 const Index = ({ navigation }) => {
     const { container, header, headerTitle, } = styles
     const [restaurant, setRestaurant] = useState({});
@@ -105,17 +105,13 @@ const Index = ({ navigation }) => {
                 </View>
 
             </View>
-            <Text style={{fontSize:20,marginLeft:30}}>
-                    รายการ
-                </Text>
-            <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
-
-                <TouchableOpacity onPress={() => navigation.navigate("Tables", { restaurant_id: restaurant._id })} activeOpacity={1}>
+            <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap',alignItems:'center',justifyContent:'center' }}>
+                <TouchableOpacity onPress={() => navigation.navigate("Tables", { restaurant_id: restaurant._id })}>
                     <View>
 
                         <View style={styles.item}>
                             <View style={styles.itemIcon}>
-                                <MaterialIcons name="table-restaurant" size={100} color="black" />
+                        <MaterialIcons name="table-restaurant" size={100} color="white" />
 
                             </View>
                         </View>
@@ -127,8 +123,8 @@ const Index = ({ navigation }) => {
                     <View >
 
                         <View style={styles.item}>
-                            <View style={styles.itemIcon}>
-                                <MaterialIcons name="restaurant-menu" size={100} color="black" />
+                        <View style={styles.itemIcon}>
+                        <MaterialIcons name="restaurant-menu" size={100} color="white" />
 
                             </View>
 
@@ -142,8 +138,8 @@ const Index = ({ navigation }) => {
                     <View >
 
                         <View style={styles.item}>
-                            <View style={styles.itemIcon}>
-                                <Entypo name="list" size={100} color="black" />
+                        <View style={styles.itemIcon}>
+                        <Entypo name="list" size={100} color="white" />
 
                             </View>
 
@@ -157,8 +153,8 @@ const Index = ({ navigation }) => {
                     <View >
 
                         <View style={styles.item}>
-                        <View style={styles.itemIcon}>
-                        <Ionicons name="settings-outline" size={100} color="white" />
+                            <View style={styles.itemIcon}>
+                                <Ionicons name="settings-outline" size={100} color="gray" />
                             </View>
 
                         </View>
@@ -176,7 +172,7 @@ const Index = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '# ',
+        backgroundColor: 'white',
         flex: 1
     }, header: {
         height: 109,
@@ -192,20 +188,12 @@ const styles = StyleSheet.create({
         marginTop:45
 
     }, item: {
-        backgroundColor: 'white',
-        width: 131,
-        height: 131 ,
+        backgroundColor: 'gray',
+        width: 150,
+        height: 150,
         marginTop: 20,
         marginHorizontal: 15,
-        justifyContent: 'center',
-        borderRadius:20,
-        shadowOffset: {
-            width: 0,
-            height: 0.1,
-        },
-        shadowOpacity: 0.23,
-        shadowRadius: 0.61,
-        elevation: 5,
+        justifyContent:'center'
 
     },
     itemIcon: {
@@ -214,7 +202,7 @@ const styles = StyleSheet.create({
     itemTitle: {
         textAlign: 'center',
         textAlignVertical: 'center',
-        fontSize: 16,
+        fontSize: 15,
         color: 'black'
 
     }, wrapper: {

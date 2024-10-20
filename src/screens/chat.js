@@ -89,7 +89,7 @@ const ChatScreen = ({ route }) => {
             return acc;
         }, []);
 
-        // Handle setting isFirst and isLast
+        
         grouped.forEach(group => {
             if (group.messages.length > 1) {
                 group.messages.forEach((message, index) => {
@@ -97,13 +97,12 @@ const ChatScreen = ({ route }) => {
                     message.isLast = index === group.messages.length - 1;
                 });
             } else {
-                // For groups with a single message, skip isFirst and isLast
+           
                 group.messages[0].isFirst = false;
                 group.messages[0].isLast = false;
             }
         });
 
-        // Mark groups that contain only one message
         grouped.forEach(group => {
             group.isOneOfGroup = group.messages.length === 1;
         });
