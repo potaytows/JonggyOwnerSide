@@ -110,7 +110,7 @@ const Index = ({ navigation }) => {
                 </Text>
             <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
 
-                <TouchableOpacity onPress={() => navigation.navigate("Tables", { restaurant_id: restaurant._id })}>
+                <TouchableOpacity onPress={() => navigation.navigate("Tables", { restaurant_id: restaurant._id })} activeOpacity={1}>
                     <View>
 
                         <View style={styles.item}>
@@ -123,7 +123,7 @@ const Index = ({ navigation }) => {
 
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate("Menus", { restaurant_id: restaurant._id })}>
+                <TouchableOpacity onPress={() => navigation.navigate("Menus", { restaurant_id: restaurant._id })} activeOpacity={1}>
                     <View >
 
                         <View style={styles.item}>
@@ -138,7 +138,7 @@ const Index = ({ navigation }) => {
 
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate("allReservations", { restaurant_id: restaurant._id })}>
+                <TouchableOpacity onPress={() => navigation.navigate("allReservations", { restaurant_id: restaurant._id })} activeOpacity={1}>
                     <View >
 
                         <View style={styles.item}>
@@ -201,10 +201,10 @@ const styles = StyleSheet.create({
         borderRadius:20,
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: 0.1,
         },
         shadowOpacity: 0.23,
-        shadowRadius: 2.62,
+        shadowRadius: 0.61,
         elevation: 5,
 
     },

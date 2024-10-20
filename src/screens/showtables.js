@@ -3,7 +3,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import Text from '../components/Text';
@@ -16,12 +16,22 @@ const apiheader = process.env.EXPO_PUBLIC_apiURI;
 const ShowTables = ({ route, navigation }) => {
     const [obj, setData] = useState([]);
     const [restaurant, setRestaurant] = useState({});
-
     const getTables = async () => {
         try {
             const response = await axios.get(apiheader + '/tables/getbyRestaurantId/' + route.params.restaurant_id);
             const result = await response.data;
             setData(result)
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
+    const changeStatus = async (item) => {
+        console.log(item._id)
+        try {
+            const response = await axios.get(apiheader + '/tables/changestatus/' + item._id);
+            const result = await response.data;
+            getTables();
         } catch (error) {
             console.error(error);
         }
@@ -44,7 +54,12 @@ const ShowTables = ({ route, navigation }) => {
 
     }, []);
 
-
+    useFocusEffect(
+        React.useCallback(() => {
+            getTables();
+            getRestaurantbyUsername();
+        }, [])
+    );
 
     return (
         <ScrollView>
@@ -71,17 +86,16 @@ const ShowTables = ({ route, navigation }) => {
                 </View>
                 <View style={styles.dragablecontainer}>
                     {obj.map((item, index) => (
-                        <StaticTable key={index} id={item._id} x={item.x} y={item.y} item={item}
-                        >
+                        <StaticTable key={index} id={item._id} x={item.x} y={item.y} item={item} changeStatus={changeStatus}>
                         </StaticTable>
                     ))}
                 </View>
-                <TouchableOpacity style={[styles.editButton]} onPress={() => {navigation.navigate("EditTables", { restaurant_id: restaurant._id })}}>
+                <TouchableOpacity style={[styles.editButton]} onPress={() => { navigation.navigate("EditTables", { restaurant_id: restaurant._id }) }}>
                     <Text style={styles.editButtonText}>แก้ไขที่นั่ง</Text>
                 </TouchableOpacity>
             </View>
-                </ScrollView>
-            );
+        </ScrollView>
+    );
 }
 
 
@@ -90,9 +104,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f9f9f9',
-        justifyContent:'center',
-        alignContent:'center',
-        paddingBottom:20
+        justifyContent: 'center',
+        alignContent: 'center',
+        paddingBottom: 20
     }, header: {
         height: 109,
         borderBottomLeftRadius: 10,
@@ -130,7 +144,7 @@ const styles = StyleSheet.create({
     }, dragablecontainer: {
         // justifyContent: 'center',
         // alignItems: 'center',
-        width: 440,
+        width: 380,
         height: 450,
         alignSelf: 'center',
         marginTop: 40,
@@ -139,19 +153,20 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         backgroundColor: 'white',
         borderColor: '#CCCCCC',
-    },editButton:{
-        width:327,
-        height:36,
-        backgroundColor:'#FF7A00',
-        alignSelf:'center',
-        borderRadius:3,
-        justifyContent:'center',
-        alignContent:'center',
-    },editButtonText:{
-        fontSize:16,
-        color:'white',
-        textAlign:'center',
-        alignSelf:'center',
+        overflow: 'hidden'
+    }, editButton: {
+        width: 327,
+        height: 36,
+        backgroundColor: '#FF7A00',
+        alignSelf: 'center',
+        borderRadius: 3,
+        justifyContent: 'center',
+        alignContent: 'center',
+    }, editButtonText: {
+        fontSize: 16,
+        color: 'white',
+        textAlign: 'center',
+        alignSelf: 'center',
     }
 });
 

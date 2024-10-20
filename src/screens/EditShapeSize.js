@@ -19,7 +19,7 @@ const EditShpaeSize = ({ route, navigation }) => {
 
     const sendnewSize = ()=>{
         console.log(editView.current.state)
-        navigation.dispatch(StackActions.replace('EditTables',{isResized:true,size:{w:editView.current.state.w,h:editView.current.state.h},editShape:route.params.editShape,restaurant_id:route.params.restaurant_id}));
+        navigation.dispatch(StackActions.replace('EditTables',{isResized:true,size:{w:Math.round(editView.current.state.w),h:Math.round(editView.current.state.h)},editShape:route.params.editShape,restaurant_id:route.params.restaurant_id}));
     }
     const getTables = async () => {
         try {
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     dragablecontainer: {
-        width: 440,
+        width: 380,
         height: 450,
         alignSelf: 'center',
         marginTop: 40,
@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         backgroundColor: 'white',
         borderColor: '#CCCCCC',
+        overflow:'hidden'
     },
     resizecontainer: {
 

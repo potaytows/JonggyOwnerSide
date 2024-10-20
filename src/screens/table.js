@@ -124,6 +124,7 @@ const Table = ({ route, navigation }) => {
             const response = await axios.put(apiheader + '/tables/edit/' + edittable._id, { text: edittableName });
             const result = await response.data;
             console.log(result)
+
             getTables();
             ToastAndroid.showWithGravityAndOffset('แก้ไขสำเร็จ!', ToastAndroid.SHORT, ToastAndroid.BOTTOM, 25, 50)
 
@@ -137,15 +138,24 @@ const Table = ({ route, navigation }) => {
 
     const fetchEditShape = async () => {
         try {
-            console.log(edittable);
-            const response = await axios.put(apiheader + '/tables/edit/' + edittable._id, { width: parseInt(newShapeWidth), height: parseInt(newShapeHeight), color: selectedColor });
-            const result = await response.data;
-            getTables();
-            ToastAndroid.showWithGravityAndOffset('แก้ไขสำเร็จ!', ToastAndroid.SHORT, ToastAndroid.BOTTOM, 25, 50)
-
+            if (parseInt(newShapeWidth) > 375) {
+                ToastAndroid.showWithGravityAndOffset('ความยาวมีค่าได้ไม่เกิน 375เท่านั้น!', ToastAndroid.SHORT, ToastAndroid.BOTTOM, 25, 50)
+            } if (parseInt(newShapeHeight) > 440) {
+                ToastAndroid.showWithGravityAndOffset('ความสูงมีค่าได้ไม่เกิน 440เท่านั้น!', ToastAndroid.SHORT, ToastAndroid.BOTTOM, 25, 50)
+            } else {
+                console.log("called")
+                const response = await axios.put(apiheader + '/tables/edit/' + edittable._id, { width: parseInt(newShapeWidth), height: parseInt(newShapeHeight), color: selectedColor });
+                const result = await response.data;
+                getTables();
+                setEditModal(!EditmodalVisible);
+                setEditTable("");
+                ToastAndroid.showWithGravityAndOffset('แก้ไขสำเร็จ!', ToastAndroid.SHORT, ToastAndroid.BOTTOM, 25, 50)
+            }
         } catch (error) {
             console.error(error);
         }
+
+
     };
     const deleteTable = async () => {
         try {
@@ -163,7 +173,10 @@ const Table = ({ route, navigation }) => {
 
         }
     };
+    const reinitialBound = async (func) => {
+        func();
 
+    }
     const getRestaurantbyUsername = async () => {
         try {
             const userauth = await SecureStore.getItemAsync('userAuth');
@@ -199,7 +212,6 @@ const Table = ({ route, navigation }) => {
             setEditModal(!EditmodalVisible);
             setSelectedColor(route.params.editShape.color)
         }
-        console.log(route.params)
 
     }, [route.params.isResized && route.params.restaurant_id && route.params.size]);
 
@@ -209,7 +221,7 @@ const Table = ({ route, navigation }) => {
 
         <ScrollView
             ref={scrollViewRef}
-        onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+            onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
         >
             <Modal
                 animationType="slide"
@@ -223,9 +235,9 @@ const Table = ({ route, navigation }) => {
                     {editModes == "table" &&
                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                             <View style={styles.Addtable}>
-                                <View style={styles.inputlabel}>
-                                    <View style={{ flexWrap: 'wrap' }}>
-                                        <Text style={{ fontSize: 15, textAlign: "center", }}>ชื่อโต๊ะ</Text>
+                                <View style={[styles.inputlabel]}>
+                                    <View style={{ flexWrap: 'wrap', alignContent: 'center' }}>
+                                        <Text style={{ fontSize: 15, textAlign: "center", color: "#BBBBBB", }}>ชื่อโต๊ะ</Text>
                                     </View>
                                     <TextInput
                                         style={styles.input}
@@ -233,95 +245,93 @@ const Table = ({ route, navigation }) => {
                                         value={edittableName}
                                         placeholder="ชื่อโต๊ะ"
                                     />
-
                                 </View>
-                                
+                                <MaterialIcons name="delete-outline" size={24} color="red" style={styles.deleteButton} onPress={() => { deleteTable() }} />
                                 <View style={[styles.inputlabel2]}>
-
                                     <TouchableOpacity style={styles.cancelButton} onPress={() => { setEditModal(!EditmodalVisible); setEditTable(""); }} activeOpacity={1}>
-                                        <Text style={{ color: 'white' }}>ยกเลิก</Text>
+                                        <Text style={{ color: 'white', textAlign: "center" }}>ยกเลิก</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={[styles.addButton]} onPress={() => { fetchAddDragable(); setAddModes(""); }} activeOpacity={1}>
-                                        <Text style={{ color: 'white' }}>เพิ่ม</Text>
-                                    </TouchableOpacity>
+                                    {edittableName != originalname &&
+                                        <TouchableOpacity style={[styles.addButton]} onPress={() => { fetchEditTable(); setEditModes(""); }} activeOpacity={1}>
+                                            <Text style={{ color: 'white', textAlign: "center" }}>แก้ไข</Text>
+                                        </TouchableOpacity>
+                                    }
                                 </View>
-
                             </View>
                         </View>
                     }
                     {editModes == "text" &&
                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                            <Text>แก้ไขข้อความ</Text>
-                            <TextInput
-                                placeholder='ชื่อโต๊ะ'
-                                placeholderTextColor='gray'
-                                style={styles.input}
-                                value={edittableName}
-                                onChangeText={text => (setEditTableName(text))}
-                            />
-                            {edittableName != originalname &&
-                                <TouchableOpacity
-                                    style={[styles.button, styles.buttonAdd]} onPress={() => { fetchEditTable(); }}>
-                                    <Text style={styles.textStyle}>แก้ไขข้อมูล</Text>
-                                </TouchableOpacity>
-                            }
-                            <TouchableOpacity
-                                style={styles.deleteButton}
-                                onPress={() => {
-                                    deleteTable();
-                                }}>
-                                <Text style={styles.textStyle}>ลบ</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => {
-                                    setEditModal(!EditmodalVisible);
-                                    setEditTable("");
-                                }}>
-                                <Text style={styles.textStyle}>ยกเลิก</Text>
-                            </TouchableOpacity>
-
+                            <View style={styles.Addtable}>
+                                <View style={[styles.inputlabel]}>
+                                    <View style={{ flexWrap: 'wrap', alignContent: 'center' }}>
+                                        <Text style={{ fontSize: 15, textAlign: "center", color: "#BBBBBB" }}>ข้อความ</Text>
+                                    </View>
+                                    <TextInput
+                                        style={styles.input}
+                                        onChangeText={setEditTableName}
+                                        value={edittableName}
+                                        placeholder="ข้อความ"
+                                    />
+                                </View>
+                                <MaterialIcons name="delete-outline" size={24} color="red" style={styles.deleteButton} onPress={() => { deleteTable() }} />
+                                <View style={[styles.inputlabel2]}>
+                                    <TouchableOpacity style={styles.cancelButton} onPress={() => { setEditModal(!EditmodalVisible); setEditTable(""); }} activeOpacity={1}>
+                                        <Text style={{ color: 'white', textAlign: "center" }}>ยกเลิก</Text>
+                                    </TouchableOpacity>
+                                    {edittableName != originalname &&
+                                        <TouchableOpacity style={[styles.addButton]} onPress={() => { fetchEditTable(); setEditModes(""); }} activeOpacity={1}>
+                                            <Text style={{ color: 'white', textAlign: "center" }}>แก้ไข</Text>
+                                        </TouchableOpacity>
+                                    }
+                                </View>
+                            </View>
                         </View>
                     }
                     {editModes == "shape" &&
-                        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                            <Text>แก้ไขรูปทรง</Text>
-                            <Button title="แก้ไขขนาด" color="blue" onPress={() => toEditShapeScreen()} />
-                            <TextInput
-                                placeholder='Height'
-                                placeholderTextColor='gray'
-                                style={styles.input}
-                                value={newShapeHeight}
-                                onChangeText={text => setNewHeight(text)}
-                            />
-                            <TextInput
-                                placeholder='Width'
-                                placeholderTextColor='gray'
-                                style={styles.input}
-                                value={newShapeWidth}
-                                onChangeText={text => setNewWidth(text)}
-                            />
-                            <Button title={selectedColor} color={selectedColor} onPress={() => setColorPicker(true)} />
+                        <View style={styles.Addtable}>
+                            <View style={[styles.inputlabel]}>
+                                <View style={{ flexWrap: 'wrap', alignContent: 'center' }}>
+                                    <Text style={{ fontSize: 15, textAlign: "center", color: "#BBBBBB" }}>Width</Text>
+                                </View>
+                                <TextInput
+                                    style={styles.input}
+                                    onChangeText={setNewWidth}
+                                    value={newShapeWidth}
+                                    placeholder="W"
+                                />
 
-                            <TouchableOpacity
-                                style={[styles.button, styles.buttonAdd]} onPress={() => { fetchEditShape(); setEditModal(!EditmodalVisible); setEditTableName("") }}>
-                                <Text style={styles.textStyle}>แก้ไขข้อมูล</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.deleteButton}
-                                onPress={() => {
-                                    deleteTable();
-                                }}>
-                                <Text style={styles.textStyle}>ลบ</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => {
-                                    setEditModal(!EditmodalVisible);
-                                    setEditTable("");
-                                }}>
-                                <Text style={styles.textStyle}>ยกเลิก</Text>
-                            </TouchableOpacity>
+                            </View>
+                            <View style={[styles.inputlabel, { marginTop: 10 }]}>
+                                <View style={{ flexWrap: 'wrap', alignContent: 'center' }}>
+                                    <Text style={{ fontSize: 15, textAlign: "center", color: "#BBBBBB" }}>Height</Text>
+                                </View>
+                                <TextInput
+                                    style={styles.input}
+                                    onChangeText={setNewHeight}
+                                    value={newShapeHeight}
+                                    placeholder="H"
+                                />
+
+                            </View>
+                            <ColorPicker style={{ width: '100%', alignSelf: 'center', marginTop: 20 }} onComplete={onSelectColor} value={selectedColor}>
+                                <Preview hideInitialColor={true} hideText={true} />
+                                <Panel1 />
+                                <HueSlider />
+                            </ColorPicker>
+                            <View style={[styles.inputlabel2, { marginTop: 20 }]}>
+                                <MaterialIcons name="delete-outline" size={30} color="red" style={styles.deleteButton} onPress={() => { deleteTable() }} />
+
+                                <MaterialIcons name="aspect-ratio" size={30} color="black" onPress={() => { toEditShapeScreen() }}/>
+                            </View>
+                            <View style={[styles.inputlabel2, { marginTop: 20 }]}>
+                                <TouchableOpacity style={styles.cancelButton} onPress={() => { setEditModal(!EditmodalVisible); setEditTable(""); }} activeOpacity={1}>
+                                    <Text style={{ color: 'white', textAlign: "center" }}>ยกเลิก</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={[styles.addButton]} onPress={() => { fetchEditShape(); }} activeOpacity={1}>
+                                    <Text style={{ color: 'white', textAlign: "center" }}>เพิ่ม</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     }
                 </View>
@@ -352,6 +362,7 @@ const Table = ({ route, navigation }) => {
                     {obj.map((item, index) => (
                         <Dragable key={index} id={item._id} x={item.x} y={item.y} item={item}
                             showEditModal={showEditModal}
+                            reinitialBound={reinitialBound}
                         >
                         </Dragable>
                     ))}
@@ -377,7 +388,7 @@ const Table = ({ route, navigation }) => {
                     <View style={styles.Addtable}>
                         <View style={styles.inputlabel}>
                             <View style={{ flexWrap: 'wrap' }}>
-                                <Text style={{ fontSize: 15, textAlign: "center", }}>ชื่อโต๊ะ</Text>
+                                <Text style={{ fontSize: 15, textAlign: "center", color: "#BBBBBB" }}>ชื่อโต๊ะ</Text>
                             </View>
                             <TextInput
                                 style={styles.input}
@@ -390,10 +401,10 @@ const Table = ({ route, navigation }) => {
                         <View style={[styles.inputlabel2]}>
 
                             <TouchableOpacity style={styles.cancelButton} onPress={() => { setAddModes(""); }} activeOpacity={1}>
-                                <Text style={{ color: 'white' }}>ยกเลิก</Text>
+                                <Text style={{ color: 'white', textAlign: "center" }}>ยกเลิก</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.addButton]} onPress={() => { fetchAddDragable(); setAddModes(""); }} activeOpacity={1}>
-                                <Text style={{ color: 'white' }}>เพิ่ม</Text>
+                                <Text style={{ color: 'white', textAlign: "center" }}>เพิ่ม</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -404,7 +415,7 @@ const Table = ({ route, navigation }) => {
                     <View style={styles.Addtable}>
                         <View style={styles.inputlabel}>
                             <View style={{ flexWrap: 'wrap' }}>
-                                <Text style={{ fontSize: 15, textAlign: "center", }}>ข่อความ</Text>
+                                <Text style={{ fontSize: 15, textAlign: "center", color: "#BBBBBB" }}>ข้อความ</Text>
                             </View>
                             <TextInput
                                 style={styles.input}
@@ -417,10 +428,10 @@ const Table = ({ route, navigation }) => {
                         <View style={[styles.inputlabel2]}>
 
                             <TouchableOpacity style={styles.cancelButton} onPress={() => { setAddModes(""); }} activeOpacity={1}>
-                                <Text style={{ color: 'white' }}>ยกเลิก</Text>
+                                <Text style={{ color: 'white', textAlign: "center" }}>ยกเลิก</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.addButton]} onPress={() => { fetchAddDragable(); setAddModes(""); }} activeOpacity={1}>
-                                <Text style={{ color: 'white' }}>เพิ่ม</Text>
+                                <Text style={{ color: 'white', textAlign: "center" }}>เพิ่ม</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -429,18 +440,18 @@ const Table = ({ route, navigation }) => {
                 }
                 {addModes == "shape" ?
                     <View style={styles.Addtable}>
-                        <ColorPicker style={{ width: '100%' }} onComplete={onSelectColor}>
-                            <Preview />
+                        <ColorPicker style={{ width: '100%', alignSelf: 'center' }} value={"#ff8a24"}onComplete={onSelectColor}>
+                            <Preview hideInitialColor={true} hideText={true} />
                             <Panel1 />
                             <HueSlider />
                         </ColorPicker>
                         <View style={[styles.inputlabel2, { marginTop: 20 }]}>
 
                             <TouchableOpacity style={styles.cancelButton} onPress={() => { setAddModes(""); }} activeOpacity={1}>
-                                <Text style={{ color: 'white' }}>ยกเลิก</Text>
+                                <Text style={{ color: 'white', textAlign: "center" }}>ยกเลิก</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.addButton]} onPress={() => { fetchAddDragable(); setAddModes(""); }} activeOpacity={1}>
-                                <Text style={{ color: 'white' }}>เพิ่ม</Text>
+                                <Text style={{ color: 'white', textAlign: "center" }}>เพิ่ม</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -458,11 +469,10 @@ const Table = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+
     },
     dragablecontainer: {
-        // justifyContent: 'center',
-        // alignItems: 'center',
-        width: 440,
+        width: 380,
         height: 450,
         alignSelf: 'center',
         marginTop: 40,
@@ -471,6 +481,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         backgroundColor: 'white',
         borderColor: '#CCCCCC',
+        overflow: 'hidden'
     },
     submitcontainer: {
         flexDirection: 'column',
@@ -491,6 +502,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         alignContent: 'center',
         justifyContent: 'center',
+        margin: 5,
 
     },
     modalView: {
@@ -532,23 +544,17 @@ const styles = StyleSheet.create({
         marginTop: 5
     }, input: {
         color: 'black',
-        height: 20,
         width: 100,
-        alignSelf: 'flex-end',
+        alignSelf: 'center',
         marginLeft: 20,
         fontSize: 15,
-        fontFamily: 'Kanit-Regular'
+        fontFamily: 'Kanit-Regular',
+
 
     }, deleteButton: {
-        backgroundColor: 'red',
-        height: 30,
-        borderRadius: 3,
-        width: 50,
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-        marginTop: 5,
-        marginLeft: 5
+        marginLeft: 0,
+        alignSelf: 'center',
+        margin: 5
 
     }, modeButtons: {
         flexDirection: 'row'
@@ -618,7 +624,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     }, Addtable: {
-        width: 400,
+        width: 350,
         alignSelf: 'center',
         borderWidth: 2,
         borderRadius: 10,
@@ -635,14 +641,19 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         paddingHorizontal: 40,
         paddingVertical: 20,
-        alignContent: 'center'
+        alignContent: 'center',
+        justifyContent: 'center',
 
     },
     inputlabel: {
         flexDirection: "row",
         alignContent: "center",
         alignItems: "center",
-        width: 300,
+        width: 200,
+        backgroundColor: '#F0F0F0',
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignSelf: 'center'
     }, cancelButton: {
         backgroundColor: "#FF3131",
         width: 141,
@@ -650,8 +661,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         alignContent: 'center',
         justifyContent: 'center',
-
-
+        margin: 5
     }, inputlabel2: {
         flexDirection: "row",
         alignContent: "center",
