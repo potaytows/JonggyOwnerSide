@@ -33,7 +33,10 @@ const AllReservations = ({ navigation, route }) => {
 
     const handleButtonPress = (reservation) => {
         if (reservation.status === "ยืนยันแล้ว") {
-            navigation.navigate('location', { reservation: reservation });
+            navigation.navigate('location', { 
+                reservation: reservation ,
+                restaurant_id: route.params.restaurant_id
+            });
         } else {
             navigation.navigate('orderList', { reservation: reservation });
         }
