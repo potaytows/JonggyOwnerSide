@@ -8,6 +8,9 @@ import StaticTable from '../components/staticTable';
 import { DragResizeBlock, DragResizeContainer } from 'react-native-drag-resize';
 import { useFocusEffect, StackActions } from '@react-navigation/native';
 import Text from '../components/Text';
+import { CommonActions } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
 
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
@@ -94,7 +97,13 @@ const EditShpaeSize = ({ route, navigation }) => {
     return (
 
         <View style={styles.container}>
-            
+            {/* <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
+                <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
+                    <MaterialIcons name="arrow-back-ios" size={24} color="white"
+                        onPress={() => navigation.dispatch(CommonActions.goBack())} />
+                </View>
+
+            </LinearGradient> */}
             <View style={styles.dragablecontainer}>
                 {obj.map((item, index) => (
                     <View key={item._id} style={styles.dragablecontent}>
@@ -130,7 +139,21 @@ const styles = StyleSheet.create({
         position: 'absolute',
 
 
+    }, header: {
+        height: 109,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        flexDirection: 'row',
+
+    }, headerTitle: {
+        color: 'white',
+        fontSize: 36,
+        fontWeight: 'bold',
+        marginLeft: 20,
+        marginTop: 45,
+
     }
+
 
 });
 

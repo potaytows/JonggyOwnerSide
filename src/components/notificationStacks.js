@@ -10,7 +10,7 @@ const NotificationStacks = () => {
 
   return (
       <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: 'white' }}}>
-        <Stack.Screen name="notification" component={NotificationScreen} options={{ title: "ข้อความ" }}/>
+        <Stack.Screen name="notification" component={NotificationScreen} options={{ title: "ข้อความ",headerShown:false }}/>
       </Stack.Navigator>
   )
 }

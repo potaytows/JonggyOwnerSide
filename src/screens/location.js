@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator,Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import axios from 'axios';
 import io from 'socket.io-client';
-
+import MapViewDirections from 'react-native-maps-directions';
+import { CommonActions } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { ScrollView } from 'react-native-gesture-handler';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 const socket = io(apiheader);
 
@@ -18,6 +22,7 @@ const LocationScreen = ({ route, navigation }) => {
             try {
                 const response = await axios.get(`${apiheader}/reservation/getLocationById/${reservation.restaurant_id._id}`);
                 setLocation(response.data);
+
             } catch (error) {
                 console.error(error);
                 Alert.alert('Error', 'Failed to fetch restaurant location');
@@ -29,7 +34,22 @@ const LocationScreen = ({ route, navigation }) => {
         fetchRestaurantLocation();
     }, [reservation]);
 
-    const handleCancelReservation = () => { 
+    useEffect(() => {
+        const fetchLocation = async () => {
+            try {
+                const response = await axios.get(`${apiheader}/reservation/userLocation/${reservation._id}`);
+                if (response.data.locationCustomer) {
+                    setReceivedLocation(response.data.locationCustomer);
+                }
+            } catch (error) {
+                console.error('Error fetching location:', error);
+            }
+        };
+        const intervalId = setInterval(fetchLocation, 5000);
+        return () => clearInterval(intervalId);
+    }, [reservation]);
+
+    const handleCancelReservation = () => {
         Alert.alert(
             "ยกเลิกการจอง",
             "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการจองนี้?",
@@ -63,7 +83,17 @@ const LocationScreen = ({ route, navigation }) => {
     }
 
     return (
+        <ScrollView>
         <View style={styles.container}>
+            <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
+                <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
+                    <MaterialIcons name="arrow-back-ios" size={24} color="white"
+                        onPress={() => navigation.dispatch(CommonActions.goBack())} />
+                </View>
+                <Text style={styles.headerTitle}>
+                    การจอง
+                </Text>
+            </LinearGradient>
             <View style={styles.details}>
                 <Text>รหัสการจอง: {reservation._id}</Text>
                 <Text>เวลา: {reservation.createdAt}</Text>
@@ -121,14 +151,31 @@ const LocationScreen = ({ route, navigation }) => {
                         title={reservation.restaurant_id.restaurantName}
                         description={location.address}
                     />
-                    {receivedLocation && ( 
-                        <Marker
-                            coordinate={{
-                                latitude: receivedLocation.latitude,
-                                longitude: receivedLocation.longitude,
-                            }}
-                            title="Your Location"
-                        />
+                   {receivedLocation && (
+                        <>
+                            <Marker
+                                coordinate={{
+                                    latitude: receivedLocation.latitude,
+                                    longitude: receivedLocation.longitude,
+                                }}
+                            >
+                                <Image source={require('../../assets/images/gpsNavigation.png')} style={{ height: 40, width: 40 }} />
+                            </Marker>
+
+                            <MapViewDirections
+                                origin={{
+                                    latitude: receivedLocation.latitude,
+                                    longitude: receivedLocation.longitude,
+                                }}
+                                destination={{
+                                    latitude: location.coordinates.latitude,
+                                    longitude: location.coordinates.longitude,
+                                }}
+                                apikey='AIzaSyC_fdB6VOZvieVkKPSHdIFhIlVuhhXynyw'
+                                strokeWidth={5}
+                                strokeColor="#FF914D"
+                            />
+                        </>
                     )}
                 </MapView>
             )}
@@ -136,24 +183,26 @@ const LocationScreen = ({ route, navigation }) => {
             <TouchableOpacity style={styles.chat} onPress={handleButtonPress}>
                 <View style={styles.image}></View>
                 <View style={styles.buttonChat}>
-                    <Text style={styles.textChat}>แชทกับร้านค้า</Text>
+                    <Text style={styles.textChat}>แชท</Text>
                 </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={handleCancelReservation}>
                 <Text style={styles.buttonText}>ยกเลิกการจอง</Text>
             </TouchableOpacity>
         </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
         backgroundColor: 'white',
+        paddingBottom:20
     },
     chat: {
         flexDirection: 'row',
+        margin:10
     },
     image: {
         width: 50,
@@ -173,12 +222,12 @@ const styles = StyleSheet.create({
         marginLeft: 5,
     },
     details: {
-        marginBottom: 20,
+        margin: 10,
     },
     sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginVertical: 10,
+        margin: 10,
     },
     totalPrice: {
         fontWeight: 'bold',
@@ -187,13 +236,12 @@ const styles = StyleSheet.create({
     totalReservation: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginTop: 20,
+        margin: 20,
         textAlign: 'right',
     },
     MenuTitle: {
-        width: '100%',
         flexDirection: 'row',
-        marginTop: 10,
+        margin: 10,
     },
     MenuLi1: {
         flex: 3,
@@ -211,9 +259,25 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     map: {
-        width: '100%',
         height: 300,
-    },
+        margin:10
+    }, header: {
+        height: 109,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        flexDirection: 'row',
+
+    }, headerTitle: {
+        color: 'white',
+        fontSize: 36,
+        fontWeight: 'bold',
+        marginLeft: 20,
+        marginTop: 45,
+
+    },buttonText:{
+        marginLeft:10,
+    }
+
 });
 
 export default LocationScreen;

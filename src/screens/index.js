@@ -153,16 +153,16 @@ const Index = ({ navigation }) => {
 
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate("allsetting", { restaurant_id: restaurant._id })}>
+                <TouchableOpacity onPress={() => navigation.navigate("allsetting", { restaurant_id: restaurant._id })} activeOpacity={1}>
                     <View >
 
                         <View style={styles.item}>
                         <View style={styles.itemIcon}>
-                        <Ionicons name="settings-outline" size={100} color="white" />
+                        <Ionicons name="settings-outline" size={100} color="black" />
                             </View>
 
                         </View>
-                        <Text style={styles.itemTitle}>ตั่งค่า</Text>
+                        <Text style={styles.itemTitle}>การตั้งค่า</Text>
                     </View>
 
                 </TouchableOpacity>
@@ -188,8 +188,8 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 36,
         fontWeight: 'bold',
-        marginLeft:20,
-        marginTop:45
+        marginLeft: 20,
+        marginTop: 45,
 
     }, item: {
         backgroundColor: 'white',

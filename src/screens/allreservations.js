@@ -3,6 +3,9 @@ import { Text, View, SafeAreaView, StyleSheet, StatusBar, FlatList, ScrollView, 
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { CommonActions } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
@@ -33,8 +36,8 @@ const AllReservations = ({ navigation, route }) => {
 
     const handleButtonPress = (reservation) => {
         if (reservation.status === "ยืนยันแล้ว") {
-            navigation.navigate('location', { 
-                reservation: reservation ,
+            navigation.navigate('location', {
+                reservation: reservation,
                 restaurant_id: route.params.restaurant_id
             });
         } else {
@@ -44,26 +47,32 @@ const AllReservations = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.container}>
+            <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
+                <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
+                    <MaterialIcons name="arrow-back-ios" size={24} color="white"
+                        onPress={() => navigation.dispatch(CommonActions.goBack())} />
+                </View>
+                <Text style={styles.headerTitle}>
+                    การจองทั้งหมด
+                </Text>
+            </LinearGradient>
             <View style={styles.loadingindi}>
                 <ActivityIndicator size={"large"} animating={isLoading} style={styles.loadingindi} />
             </View>
-            <View style={styles.topper}></View>
+
             <ScrollView>
                 <View>
-                    <View style={styles.reserveCon}>
-                        <View style={styles.list}>
-                            <Text style={styles.title1}>รายการจอง</Text>
-                            <Text style={styles.title2}>เวลา</Text>
-                        </View>
-                    </View>
                     {reservationList.length < 1 && (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
                             <Text>ร้านของคุณเงียบมาก ;-;!</Text>
                         </View>
                     )}
                     {reservationList && reservationList.length > 0 ? reservationList.map((item, index) => (
+
                         <View key={index}>
-                            <View style={styles.reserveCon}>
+                            <View style={[styles.reserveCon,
+                            item.status === "ยืนยันแล้ว" && { borderLeftColor: 'green' },
+                            item.status === "ยกเลิกการจองแล้ว" && { borderLeftColor: 'gray' }]}>
                                 <View style={styles.ReservationList}>
                                     <View style={styles.FlexReserve}>
                                         <Text style={styles.title3}>การจองที่ {index + 1}</Text>
@@ -71,15 +80,15 @@ const AllReservations = ({ navigation, route }) => {
                                     </View>
 
 
-                                    <Text>โต๊ะ: {item.reservedTables.map(table => table.tableName).join(', ')}</Text>
+                                    <Text style={styles.title5}>โต๊ะ {item.reservedTables.map(table => table.tableName).join(', ')}</Text>
 
                                     <View style={styles.flexstatus}>
-                                        <Text style={[styles.statusres, 
-                                            item.status === "ยืนยันแล้ว" && { color: 'green'},
-                                            item.status === "ยกเลิกการจองแล้ว" && { color: 'red'}]}>{item.status}</Text>
+                                        <Text style={[styles.statusres,
+                                        item.status === "ยืนยันแล้ว" && { color: 'green' },
+                                        item.status === "ยกเลิกการจองแล้ว" && { color: 'red' }]}>{item.status}</Text>
                                         <View style={styles.Xbutton}>
                                             <TouchableOpacity
-                                                style={[styles.button, 
+                                                style={[styles.button,
                                                 item.status === "ยกเลิกการจองแล้ว" && { backgroundColor: 'grey' }]}
                                                 onPress={() => item.status !== "ยกเลิกการจองแล้ว" && handleButtonPress(item)}
                                                 disabled={item.status === "ยกเลิกการจองแล้ว"}
@@ -102,9 +111,6 @@ const AllReservations = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
-        marginRight: 10,
-        marginLeft: 10
     },
     list: {
         flexDirection: 'row',
@@ -122,28 +128,43 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     reserveCon: {
-        borderBottomWidth: 5,
-        borderBottomColor: '#EDEDED',
-        
-        marginTop:10
+        padding: 10,
+        marginTop: 20,
+        marginLeft: 20,
+        marginRight: 20,
+        borderLeftWidth: 10,
+        borderLeftColor: 'yellow',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 5,
+        borderRadius: 10,
+        backgroundColor: 'white',
     },
     FlexReserve: {
         flexDirection: 'row',
     },
     title3: {
         width: '50%',
+        fontSize: 16
     },
     title4: {
         width: '50%',
         textAlign: 'right',
     },
+    title5: {
+        fontSize: 18
+    },
     button: {
         backgroundColor: '#FF914D',
         padding: 10,
         borderRadius: 5,
-        alignSelf:'flex-end',
-        marginBottom:10,
-        
+        alignSelf: 'flex-end',
+
     },
     buttonText: {
         color: 'white',
@@ -167,7 +188,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     Xbutton: {
-        flex:1,
+        flex: 1,
+    }, header: {
+        height: 109,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        flexDirection: 'row',
+    }, headerTitle: {
+        color: 'white',
+        fontSize: 36,
+        fontWeight: 'bold',
+        marginLeft: 20,
+        marginTop: 45,
     }
 });
 

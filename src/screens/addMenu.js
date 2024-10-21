@@ -5,6 +5,9 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
+import { CommonActions } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const AddMenu = ({ navigation, route }) => {
     const [isLoading, setLoading] = useState(false);
@@ -72,28 +75,43 @@ const AddMenu = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.container}>
+             <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
+                    <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
+                        <MaterialIcons name="arrow-back-ios" size={24} color="white"
+                            onPress={() => navigation.dispatch(CommonActions.goBack())} />
+                    </View>
+                    <Text style={styles.headerTitle}>
+                        เพิ่มเมนูอาหาร
+                    </Text>
+                </LinearGradient>
             {isLoading && <View style={styles.activityIndicatorBody}>
                 <ActivityIndicator size="large" color='#ff8a24' animating={isLoading} />
             </View>}
+            {image && <Image source={{ uri: image.uri }} style={styles.previewImage} />}
 
+            <View style={styles.imageButton}>
+                <Button title="เลือกรูปภาพ" onPress={pickImage} style={styles.addImageButton} />
+            </View>
 
             <View style={styles.menuNameCont}>
-                <Text>ชื่อเมนูอาหาร</Text>
-                <View style={{ width: '100%', marginTop: 5, alignContent: 'center', height: Math.max(35, height) }}>
+                <View style={styles.layoutMenuname}>
+                    <Text style={styles.textresName}>ชื่อเมนูอาหาร</Text>
 
-                    <TextInput
-                        style={[styles.nameinput, { height: Math.max(35, height) }]}
-                        onChangeText={setMenuName}
-                        value={menuName}
-                        placeholder='ใส่ชื่อเมนูของคุณ'
-                        multiline={true}
-                        onContentSizeChange={(event) =>
-                            setHeight(event.nativeEvent.contentSize.height)
-                        }
+                    <View style={{ width: '100%', marginTop: 5, alignContent: 'center', height: Math.max(35, height) }}>
 
-                    />
+                        <TextInput
+                            style={[styles.nameinput, { height: Math.max(35, height) }]}
+                            onChangeText={setMenuName}
+                            value={menuName}
+                            placeholder='ใส่ชื่อเมนูของคุณ'
+                            multiline={true}
+                            onContentSizeChange={(event) =>
+                                setHeight(event.nativeEvent.contentSize.height)
+                            }
+
+                        />
+                    </View>
                 </View>
-                <Text>ราคา</Text>
                 <View style={{ width: '100%', height: 40, marginTop: 5, alignContent: 'center' }}>
                     <TextInput
                         onChangeText={setPrice}
@@ -102,10 +120,7 @@ const AddMenu = ({ navigation, route }) => {
                         style={styles.input}
                     />
                 </View>
-                <View style={styles.imageButton}>
-                    <Button title="เลือกรูปภาพ" onPress={pickImage} style={styles.addImageButton} />
-                    {image && <Image source={{ uri: image.uri }} style={styles.previewImage} />}
-                </View>
+
 
             </View >
             <View style={styles.addButtonCont}>
@@ -134,18 +149,49 @@ const styles = StyleSheet.create({
         right: 0,
         justifyContent: 'center',
         alignItems: 'center'
-    }, input: {
+    },
+    textresName: {
+        marginLeft: 10
+    },
+    layoutMenuname: {
+        backgroundColor: 'white',
+        paddingTop: 10,
+        paddingBottom: 10,
+        borderRadius: 10,
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 5,
+        marginBottom: 10
+    },
+    input: {
         borderWidth: 1,
         flex: 1,
         borderRadius: 5,
         padding: 10,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        borderWidth: 0,
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 5,
+
+
     }, nameinput: {
         borderWidth: 1,
         flex: 1,
         borderRadius: 5,
         padding: 10,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        borderWidth: 0,
 
     }, menuNameCont: {
         marginHorizontal: 20,
@@ -178,13 +224,25 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'center'
     }, previewImage: {
-        width: 200, height: 200,
-        marginTop: 20
+        width: 200, 
+        height: 200,
+        marginTop: 20,
+        margin:'auto',
+        borderRadius:20
+    }, header: {
+        height: 109,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        flexDirection: 'row',
 
-    }, addImageButton: {
+    }, headerTitle: {
+        color: 'white',
+        fontSize: 36,
+        fontWeight: 'bold',
+        marginLeft: 20,
+        marginTop: 45,
 
     }
-
 
 })
 

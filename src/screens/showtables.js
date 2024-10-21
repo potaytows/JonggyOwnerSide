@@ -63,8 +63,7 @@ const ShowTables = ({ route, navigation }) => {
 
     return (
         <ScrollView>
-            <View style={styles.container}>
-                <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
+            <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
                     <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
                         <MaterialIcons name="arrow-back-ios" size={24} color="white"
                             onPress={() => navigation.dispatch(CommonActions.goBack())}
@@ -76,6 +75,8 @@ const ShowTables = ({ route, navigation }) => {
                         จัดการที่นั่ง
                     </Text>
                 </LinearGradient>
+            <View style={styles.container}>
+                
                 <View style={styles.restaurantHeader}>
                     <View style={styles.restaurantBanner}>
                         <Image source={{ uri: apiheader + '/image/getRestaurantIcon/' + restaurant._id }} width={100} height={100} style={styles.restaurantimage} />
