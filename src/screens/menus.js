@@ -191,6 +191,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginLeft: 20,
         marginTop: 45,
+
     }
 
 })

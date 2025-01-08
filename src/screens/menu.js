@@ -531,19 +531,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         marginLeft:10
-
     }, header: {
         height: 109,
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
         flexDirection: 'row',
-
     }, headerTitle: {
         color: 'white',
         fontSize: 36,
         fontWeight: 'bold',
         marginLeft: 20,
         marginTop: 45,
+
 
     }
 

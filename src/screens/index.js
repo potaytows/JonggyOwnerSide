@@ -1,10 +1,9 @@
 import { View, SafeAreaView, StyleSheet, StatusBar, FlatList, TextInput, ActivityIndicator, TouchableOpacity, Switch } from 'react-native'
+
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import * as SecureStore from 'expo-secure-store';
-import Dragable from '../components/dragable';
 import React, { useEffect, useState } from 'react';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import axios from 'axios';
@@ -14,6 +13,7 @@ const apiheader = process.env.EXPO_PUBLIC_apiURI;
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useFocusEffect, StackActions } from '@react-navigation/native';
 import { Image } from 'expo-image';
+
 const Index = ({ navigation }) => {
     const { container, header, headerTitle, } = styles
     const [restaurant, setRestaurant] = useState({});
@@ -123,11 +123,12 @@ const Index = ({ navigation }) => {
             <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
 
                 <TouchableOpacity onPress={() => navigation.navigate("Tables", { restaurant_id: restaurant._id })} activeOpacity={1}>
+
                     <View>
 
                         <View style={styles.item}>
                             <View style={styles.itemIcon}>
-                                <MaterialIcons name="table-restaurant" size={100} color="black" />
+                        <MaterialIcons name="table-restaurant" size={100} color="white" />
 
                             </View>
                         </View>
@@ -139,8 +140,8 @@ const Index = ({ navigation }) => {
                     <View >
 
                         <View style={styles.item}>
-                            <View style={styles.itemIcon}>
-                                <MaterialIcons name="restaurant-menu" size={100} color="black" />
+                        <View style={styles.itemIcon}>
+                        <MaterialIcons name="restaurant-menu" size={100} color="white" />
 
                             </View>
 
@@ -154,8 +155,8 @@ const Index = ({ navigation }) => {
                     <View >
 
                         <View style={styles.item}>
-                            <View style={styles.itemIcon}>
-                                <Entypo name="list" size={100} color="black" />
+                        <View style={styles.itemIcon}>
+                        <Entypo name="list" size={100} color="white" />
 
                             </View>
 
@@ -171,6 +172,7 @@ const Index = ({ navigation }) => {
                         <View style={styles.item}>
                             <View style={styles.itemIcon}>
                                 <Ionicons name="settings-outline" size={100} color="black" />
+
                             </View>
 
                         </View>
@@ -188,7 +190,7 @@ const Index = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '# ',
+        backgroundColor: 'white',
         flex: 1
     }, header: {
         height: 109,
@@ -219,6 +221,7 @@ const styles = StyleSheet.create({
         shadowRadius: 0.61,
         elevation: 5,
 
+
     },
     itemIcon: {
         alignSelf: 'center',
@@ -226,7 +229,7 @@ const styles = StyleSheet.create({
     itemTitle: {
         textAlign: 'center',
         textAlignVertical: 'center',
-        fontSize: 16,
+        fontSize: 15,
         color: 'black'
 
     }, wrapper: {

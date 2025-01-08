@@ -5,6 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 import { CommonActions } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
+
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
 const NotificationScreen = () => {
@@ -52,6 +53,7 @@ const NotificationScreen = () => {
                         การแจ้งเตือน
                     </Text>
                 </LinearGradient>
+
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                 <TouchableOpacity style={styles.chats}>
                     <Text style={styles.textchats} >ข้อความ</Text>
@@ -162,6 +164,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginLeft: 20,
         marginTop: 45,
+
 
     }
 });

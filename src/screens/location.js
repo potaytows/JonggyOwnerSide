@@ -8,6 +8,7 @@ import { CommonActions } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
+
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 const socket = io(apiheader);
 

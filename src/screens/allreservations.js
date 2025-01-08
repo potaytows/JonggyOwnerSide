@@ -59,7 +59,6 @@ const AllReservations = ({ navigation, route }) => {
             <View style={styles.loadingindi}>
                 <ActivityIndicator size={"large"} animating={isLoading} style={styles.loadingindi} />
             </View>
-
             <ScrollView>
                 <View>
                     {reservationList.length < 1 && (
@@ -68,6 +67,7 @@ const AllReservations = ({ navigation, route }) => {
                         </View>
                     )}
                     {reservationList && reservationList.length > 0 ? reservationList.map((item, index) => (
+
 
                         <View key={index}>
                             <View style={[styles.reserveCon,
@@ -150,7 +150,9 @@ const styles = StyleSheet.create({
     },
     title3: {
         width: '50%',
+
         fontSize: 16
+
     },
     title4: {
         width: '50%',
@@ -158,13 +160,13 @@ const styles = StyleSheet.create({
     },
     title5: {
         fontSize: 18
+
     },
     button: {
         backgroundColor: '#FF914D',
         padding: 10,
         borderRadius: 5,
-        alignSelf: 'flex-end',
-
+        alignSelf: 'flex-end',        
     },
     buttonText: {
         color: 'white',
