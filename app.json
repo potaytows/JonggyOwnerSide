@@ -11,6 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "newArchEnabled": true,
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -36,15 +37,12 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      [
-        "expo-location",
+        ["expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
-        },
-        "expo-font",{
-        "fonts":["/assets/fonts/Kanit-Regular.ttf"]
-      }
-      ]
+        }],
+        ["expo-font",{
+        "fonts":["/assets/fonts/Kanit-Regular.ttf"]}]
     ]
   }
 }

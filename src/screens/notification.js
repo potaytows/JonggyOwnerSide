@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Text, View, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { CommonActions } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
@@ -44,6 +47,13 @@ const NotificationScreen = () => {
 
     return (
         <SafeAreaView style={styles.container}>
+             <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
+
+                    <Text style={styles.headerTitle}>
+                        การแจ้งเตือน
+                    </Text>
+                </LinearGradient>
+
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                 <TouchableOpacity style={styles.chats}>
                     <Text style={styles.textchats} >ข้อความ</Text>
@@ -83,7 +93,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
-        padding: 10,
     },
     messageItem: {
         padding: 10,
@@ -143,6 +152,20 @@ const styles = StyleSheet.create({
     textshow:{
         flex:1,
         marginLeft:10
+    }, header: {
+        height: 109,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        flexDirection: 'row',
+
+    }, headerTitle: {
+        color: 'white',
+        fontSize: 36,
+        fontWeight: 'bold',
+        marginLeft: 20,
+        marginTop: 45,
+
+
     }
 });
 

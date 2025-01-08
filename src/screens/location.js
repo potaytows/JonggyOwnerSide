@@ -4,6 +4,10 @@ import MapView, { Marker } from 'react-native-maps';
 import axios from 'axios';
 import io from 'socket.io-client';
 import MapViewDirections from 'react-native-maps-directions';
+import { CommonActions } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 const socket = io(apiheader);
@@ -80,7 +84,17 @@ const LocationScreen = ({ route, navigation }) => {
     }
 
     return (
+        <ScrollView>
         <View style={styles.container}>
+            <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
+                <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
+                    <MaterialIcons name="arrow-back-ios" size={24} color="white"
+                        onPress={() => navigation.dispatch(CommonActions.goBack())} />
+                </View>
+                <Text style={styles.headerTitle}>
+                    การจอง
+                </Text>
+            </LinearGradient>
             <View style={styles.details}>
                 <Text>รหัสการจอง: {reservation._id}</Text>
                 <Text>เวลา: {reservation.createdAt}</Text>
@@ -170,24 +184,26 @@ const LocationScreen = ({ route, navigation }) => {
             <TouchableOpacity style={styles.chat} onPress={handleButtonPress}>
                 <View style={styles.image}></View>
                 <View style={styles.buttonChat}>
-                    <Text style={styles.textChat}>แชทกับร้านค้า</Text>
+                    <Text style={styles.textChat}>แชท</Text>
                 </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={handleCancelReservation}>
                 <Text style={styles.buttonText}>ยกเลิกการจอง</Text>
             </TouchableOpacity>
         </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
         backgroundColor: 'white',
+        paddingBottom:20
     },
     chat: {
         flexDirection: 'row',
+        margin:10
     },
     image: {
         width: 50,
@@ -207,12 +223,12 @@ const styles = StyleSheet.create({
         marginLeft: 5,
     },
     details: {
-        marginBottom: 20,
+        margin: 10,
     },
     sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginVertical: 10,
+        margin: 10,
     },
     totalPrice: {
         fontWeight: 'bold',
@@ -221,13 +237,12 @@ const styles = StyleSheet.create({
     totalReservation: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginTop: 20,
+        margin: 20,
         textAlign: 'right',
     },
     MenuTitle: {
-        width: '100%',
         flexDirection: 'row',
-        marginTop: 10,
+        margin: 10,
     },
     MenuLi1: {
         flex: 3,
@@ -245,9 +260,25 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     map: {
-        width: '100%',
         height: 300,
-    },
+        margin:10
+    }, header: {
+        height: 109,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        flexDirection: 'row',
+
+    }, headerTitle: {
+        color: 'white',
+        fontSize: 36,
+        fontWeight: 'bold',
+        marginLeft: 20,
+        marginTop: 45,
+
+    },buttonText:{
+        marginLeft:10,
+    }
+
 });
 
 export default LocationScreen;

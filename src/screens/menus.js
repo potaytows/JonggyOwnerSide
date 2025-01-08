@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, SafeAreaView, StyleSheet, StatusBar, FlatList, ScrollView, TextInput, ActivityIndicator, TouchableOpacity, Image, Button, Alert } from 'react-native'
+import { View, SafeAreaView, StyleSheet, StatusBar, FlatList, ScrollView, TextInput, ActivityIndicator, TouchableOpacity, Image, Button, Alert } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native';
-
 import axios from 'axios';
-
 import * as SecureStore from 'expo-secure-store';
-
+import Text from '../components/Text';
+import { CommonActions } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
 
 
 
@@ -50,6 +51,15 @@ const Menus = ({ navigation }) => {
 
 
         <SafeAreaView style={styles.container}>
+             <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
+                    <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
+                        <MaterialIcons name="arrow-back-ios" size={24} color="white"
+                            onPress={() => navigation.dispatch(CommonActions.goBack())} />
+                    </View>
+                    <Text style={styles.headerTitle}>
+                        แก้ไขเมนูอาหาร
+                    </Text>
+                </LinearGradient>
             <View style={styles.loadingindi}>
                 <ActivityIndicator size={"large"} animating={isLoading} style={styles.loadingindi} />
             </View>
@@ -170,6 +180,18 @@ const styles = StyleSheet.create({
         fontSize:16,
         color:'#ff8a24'
        
+    }, header: {
+        height: 109,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        flexDirection: 'row',
+    }, headerTitle: {
+        color: 'white',
+        fontSize: 36,
+        fontWeight: 'bold',
+        marginLeft: 20,
+        marginTop: 45,
+
     }
 
 })

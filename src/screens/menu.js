@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, SafeAreaView, StyleSheet, StatusBar, FlatList, Modal, ActivityIndicator, Alert, ToastAndroid, TouchableOpacity, Image, Button, TextInput } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
+import AutoHeightImage from 'react-native-auto-height-image'
 import { useFocusEffect } from '@react-navigation/native';
 import { EvilIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import { Appbar } from 'react-native-paper';
+import { CommonActions } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
 
 
@@ -152,6 +155,15 @@ const Menu = ({ navigation, route }) => {
     return (
 
         <ScrollView style={{ flex: 1 }}>
+            <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
+                    <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
+                        <MaterialIcons name="arrow-back-ios" size={24} color="white"
+                            onPress={() => navigation.dispatch(CommonActions.goBack())} />
+                    </View>
+                    <Text style={styles.headerTitle}>
+                        แก้ไขเมนูอาหาร
+                    </Text>
+                </LinearGradient>
             {isLoading && <View style={styles.activityIndicatorBody}>
                 <ActivityIndicator size="large" color='#ff8a24' animating={isLoading} />
             </View>}
@@ -519,6 +531,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         marginLeft:10
+    }, header: {
+        height: 109,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        flexDirection: 'row',
+    }, headerTitle: {
+        color: 'white',
+        fontSize: 36,
+        fontWeight: 'bold',
+        marginLeft: 20,
+        marginTop: 45,
+
 
     }
 

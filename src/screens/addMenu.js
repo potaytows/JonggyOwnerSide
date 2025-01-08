@@ -5,6 +5,9 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
+import { CommonActions } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const AddMenu = ({ navigation, route }) => {
     const [isLoading, setLoading] = useState(false);
@@ -72,6 +75,15 @@ const AddMenu = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.container}>
+             <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
+                    <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
+                        <MaterialIcons name="arrow-back-ios" size={24} color="white"
+                            onPress={() => navigation.dispatch(CommonActions.goBack())} />
+                    </View>
+                    <Text style={styles.headerTitle}>
+                        เพิ่มเมนูอาหาร
+                    </Text>
+                </LinearGradient>
             {isLoading && <View style={styles.activityIndicatorBody}>
                 <ActivityIndicator size="large" color='#ff8a24' animating={isLoading} />
             </View>}
@@ -217,10 +229,20 @@ const styles = StyleSheet.create({
         marginTop: 20,
         margin:'auto',
         borderRadius:20
-    }, addImageButton: {
+    }, header: {
+        height: 109,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        flexDirection: 'row',
+
+    }, headerTitle: {
+        color: 'white',
+        fontSize: 36,
+        fontWeight: 'bold',
+        marginLeft: 20,
+        marginTop: 45,
 
     }
-
 
 })
 

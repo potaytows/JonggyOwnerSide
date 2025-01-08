@@ -4,12 +4,14 @@ import io from 'socket.io-client';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
-import { reduce } from 'lodash';
+import { CommonActions } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 const socket = io(apiheader);
 
-const ChatScreen = ({ route }) => {
+const ChatScreen = ({ route,navigation}) => {
     const { reservationID } = route.params;
     const [newMessage, setNewMessage] = useState('');
     const [messages, setMessages] = useState([]);
@@ -114,6 +116,14 @@ const ChatScreen = ({ route }) => {
     return (
         <View style={styles.container}>
             <ScrollView ref={scrollViewRef}>
+            <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
+                <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
+                    <MaterialIcons name="arrow-back-ios" size={24} color="white"
+                        onPress={() => navigation.dispatch(CommonActions.goBack())} />
+                </View>
+                <Text style={styles.headerTitle}>
+                </Text>
+            </LinearGradient>
                 {groupedMessages.length === 0 && <Text style={styles.loadingText}>No messages yet.</Text>}
                 {groupedMessages.map((group, groupIndex) => (
                     <View key={groupIndex}>
@@ -189,7 +199,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingBottom: 70,
-        padding: 10
     },
     messageContainer: {
         alignSelf: 'flex-end',
@@ -281,6 +290,19 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 12,
         color:'#999999'
+    }, header: {
+        height: 109,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        flexDirection: 'row',
+
+    }, headerTitle: {
+        color: 'white',
+        fontSize: 36,
+        fontWeight: 'bold',
+        marginLeft: 20,
+        marginTop: 45,
+
     }
 });
 
