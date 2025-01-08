@@ -6,19 +6,21 @@ const table = ({ item, changeStatus }) => {
     const styles = StyleSheet.create({
         container: {
             left: item.x,
-            top: item.y,
-            alignItems: 'center',
-            justifyContent: 'center',
-            position: 'absolute'
+            top: item.y,    
+            position: 'absolute',
         },
         text: {
             color: 'black',
+            textAlign:'center'
         },
         image: {
-            height: 30,
+            height: 30, 
             width: 30
         }, shape: {
-            backgroundColor: "orange"
+            backgroundColor: "orange",
+            zIndex:-1,
+            position: 'absolute'
+            
         }
     });
 
@@ -70,9 +72,9 @@ const table = ({ item, changeStatus }) => {
     // ? backgroundColor:item.color:{}
     if (item.type == "shape") {
         return (
-            <View style={[styles.shape, { left: item.x, top: item.y, height: item.height, width: item.width, backgroundColor: item.color, zIndex: -20 }]}>
+            <View style={[styles.shape, { left: item.x, top: item.y, height: item.height, width: item.width, backgroundColor: item.color}]}>
 
-            </View>
+            </View> 
         );
 
     }

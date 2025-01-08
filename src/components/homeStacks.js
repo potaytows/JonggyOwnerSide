@@ -14,6 +14,8 @@ import ShowTables from '../screens/showtables';
 import EditShapeSizeScreen from '../screens/EditShapeSize'
 import AllSettingScreen from '../screens/allsetting';
 import SetContactLocationScreen from '../screens/setContactLocation';
+import PresetsScreen from '../screens/preset';
+import EditRestaurantScreen from '../screens/editRestaurantScreen';
 
 const Stack = createStackNavigator();
 
@@ -32,8 +34,12 @@ const Stacks = () => {
                         <Stack.Screen name="location" component={LocationScreen} options={{ headerShown: false }} />
                         <Stack.Screen name="Chat" component={ChatScreen}  options={{ headerShown: false }}/>
                         <Stack.Screen name="EditShapeSize" component={EditShapeSizeScreen} options={({ navigation, route }) => ({ title: "Edit Shape Size" })} />
-                        <Stack.Screen name="allsetting" component={AllSettingScreen} options={{ title: "Setting" }} />
-                        <Stack.Screen name="setContactLocation" component={SetContactLocationScreen} options={{ title: "Edit Shape Size" }} />
+                        <Stack.Screen name="allsetting" component={AllSettingScreen} options={{ title: "Setting",headerShown:false }} />
+                        <Stack.Screen name="setContactLocation" component={SetContactLocationScreen} options={{ title: "" ,headerShown:false}} />
+                        <Stack.Screen name="Presets" component={PresetsScreen} options={{ title: "Select Preset",headerShown:false }} />
+                        <Stack.Screen name="EditRestaurant" component={EditRestaurantScreen} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
+
+
 
                 </Stack.Navigator>
         )

@@ -15,16 +15,17 @@ import axios from 'axios';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
 
-const updateTable = async (xTrans, yTrans, id) => {
+const updateTable = async (xTrans, yTrans, id, restaurant_id,item) => {
 
     try {
-        const response = await axios.put(apiheader + '/tables/edit/' + id, { x: xTrans, y: yTrans });
+
+        const response = await axios.put(apiheader + '/tables/edit/' +id+"/"+restaurant_id, { x:xTrans,y:yTrans });
     } catch (error) {
         console.error(error);
     }
 };
 const bound = (base, value, min, max) => {
-    maxvalue = base + value
+    let maxvalue = base + value
     if (maxvalue > max) {
         return 0;
     } if (maxvalue < min) {
@@ -120,8 +121,7 @@ const Dragable = (props) => {
 
             // }
             isGestureActive.value = false;
-            updateTable(translateX.value, translateY.value, props.item._id)
-            console.log(maxY)
+            updateTable(translateX.value, translateY.value, props.item._id,props.restaurant_id,props.item)
 
 
 
