@@ -147,7 +147,7 @@ const ShowTables = ({ route, navigation }) => {
 
                         <View style={styles.restaurantHeader}>
                             <View style={styles.restaurantBanner}>
-                                <Image source={{ uri: apiheader + '/image/getRestaurantIcon/' + restaurant._id+Math.round(Math.random()*1000000000).toString() }} width={100} height={100} style={styles.restaurantimage} />
+                                <Image source={{ uri: apiheader + '/image/getRestaurantIcon/' + restaurant._id+"/"+Math.round(Math.random()*1000000000).toString() }} width={100} height={100} style={styles.restaurantimage} />
                                 <View style={styles.restaurantInfo}>
                                     <Text style={{ fontSize: 20 }}>{restaurant.restaurantName}</Text>
                                 </View>
