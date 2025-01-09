@@ -128,7 +128,7 @@ const Index = ({ navigation }) => {
 
                         <View style={styles.item}>
                             <View style={styles.itemIcon}>
-                        <MaterialIcons name="table-restaurant" size={100} color="white" />
+                        <MaterialIcons name="table-restaurant" size={100} color="black" />
 
                             </View>
                         </View>
@@ -141,7 +141,7 @@ const Index = ({ navigation }) => {
 
                         <View style={styles.item}>
                         <View style={styles.itemIcon}>
-                        <MaterialIcons name="restaurant-menu" size={100} color="white" />
+                        <MaterialIcons name="restaurant-menu" size={100} color="black" />
 
                             </View>
 
@@ -156,7 +156,7 @@ const Index = ({ navigation }) => {
 
                         <View style={styles.item}>
                         <View style={styles.itemIcon}>
-                        <Entypo name="list" size={100} color="white" />
+                        <Entypo name="list" size={100} color="black" />
 
                             </View>
 
@@ -190,7 +190,6 @@ const Index = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
         flex: 1
     }, header: {
         height: 109,
