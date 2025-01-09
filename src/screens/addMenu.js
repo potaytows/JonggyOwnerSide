@@ -56,7 +56,7 @@ const AddMenu = ({ navigation, route }) => {
                 } else {
                     const response = await axios.post(apiheader + '/menus/uploadImage/' + result.object._id + "/default");
                 }
-                navigation.navigate("Menus")
+                navigation.dispatch(CommonActions.goBack())
                 ToastAndroid.showWithGravityAndOffset('Added ' + menuName, ToastAndroid.LONG, ToastAndroid.BOTTOM, 25, 50)
             }
 
