@@ -45,20 +45,20 @@ const AddMenu = ({ navigation, route }) => {
             formData.append("price", price)
             const response = await axios.post(apiheader + '/menus/addMenu/' + userData.username, { menuName: menuName, price: price });
             const result = await response.data;
-            if (result.status == "added") {
-                console.log(result)
-                if (image) {
-                    const uploadResult = await FileSystem.uploadAsync(apiheader + '/menus/uploadImage/' + result.object._id, image.uri, {
-                        httpMethod: 'POST',
-                        uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-                        fieldName: 'image'
-                    });
-                } else {
-                    const response = await axios.post(apiheader + '/menus/uploadImage/' + result.object._id + "/default");
-                }
-                navigation.dispatch(CommonActions.goBack())
-                ToastAndroid.showWithGravityAndOffset('Added ' + menuName, ToastAndroid.LONG, ToastAndroid.BOTTOM, 25, 50)
+        if (result.status == "added") {
+            console.log(result)
+            if (image) {
+                const uploadResult = await FileSystem.uploadAsync(apiheader + '/menus/uploadImage/' + result.object._id, image.uri, {
+                    httpMethod: 'POST',
+                    uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+                    fieldName: 'image'
+                });
+            } else {
+                const response = await axios.post(apiheader + '/menus/uploadImage/' + result.object._id + "/default");
             }
+            navigation.dispatch(CommonActions.goBack())
+            ToastAndroid.showWithGravityAndOffset('Added ' + menuName, ToastAndroid.LONG, ToastAndroid.BOTTOM, 25, 50)
+        }
 
 
         } catch (error) {
