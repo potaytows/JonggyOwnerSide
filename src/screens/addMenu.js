@@ -15,8 +15,6 @@ const AddMenu = ({ navigation, route }) => {
     const [price, setPrice] = React.useState("");
     const [height, setHeight] = useState(0);
     const [image, setImage] = useState(null);
-
-
     const pickImage = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
