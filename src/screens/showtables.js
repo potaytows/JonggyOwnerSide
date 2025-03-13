@@ -37,6 +37,7 @@ const ShowTables = ({ route, navigation }) => {
 
     }
     const getTables = async () => {
+        setLoading(true)
         try {
             const response = await axios.get(apiheader + '/tables/getbyRestaurantId/' + route.params.restaurant_id);
             const result = await response.data;
@@ -45,6 +46,8 @@ const ShowTables = ({ route, navigation }) => {
             setPresets(result.presets || []);
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false)
         }
 
     }
@@ -89,9 +92,8 @@ const ShowTables = ({ route, navigation }) => {
         } catch (error) {
             console.error(error);
         } finally {
-            setLoading(false);
-            setEditPresetName(false);
             getTables();
+            setEditPresetName(false);
         }
 
     }
@@ -100,10 +102,12 @@ const ShowTables = ({ route, navigation }) => {
         try {
             const response = await axios.delete(apiheader + '/preset/delete/' + id);
             setPresets([]);
+            setData([]);
+            setNewPresetName("");
+            setPresets([]);
         } catch (error) {
             console.error(error);
         } finally {
-            setLoading(false);
             getTables();
         }
 
@@ -147,111 +151,122 @@ const ShowTables = ({ route, navigation }) => {
 
                         <View style={styles.restaurantHeader}>
                             <View style={styles.restaurantBanner}>
-                                <Image source={{ uri: apiheader + '/image/getRestaurantIcon/' + restaurant._id+"/"+Math.round(Math.random()*1000000000).toString() }} width={100} height={100} style={styles.restaurantimage} />
+                                <Image source={{ uri: apiheader + '/image/getRestaurantIcon/' + restaurant._id + "/" + Math.round(Math.random() * 1000000000).toString() }} width={100} height={100} style={styles.restaurantimage} />
                                 <View style={styles.restaurantInfo}>
                                     <Text style={{ fontSize: 20 }}>{restaurant.restaurantName}</Text>
                                 </View>
                             </View>
                         </View>
-                        {presets.length > 0 ? (
-                            <View style={{ flex: 1 }}>
+                        <View>
+                            {presets && presets.length !== undefined && presets.length > 0 ? (
+                                <View style={{ flex: 1 }}>
 
-                                {isEdittingPresetName ? (
-                                    <View>
-                                        <View style={styles.presetDropdown}>
-                                            <View style={{ width: 175 }}>
-                                                <TextInput
-                                                    onChangeText={setNewPresetName}
-                                                    value={newpresetname}
-                                                    placeholder="ชื่อ Preset"
-                                                    style={{ fontSize: 15 }}
-                                                />
-                                            </View>
-                                            {newpresetname != obj.presetName ? (
-                                                <View style={{ flexDirection: 'row', flexWrap: 'wrap', left: 12 }}>
-                                                    <TouchableOpacity style={{ width: 30, alignContent: 'center', alignItems: 'center' }} onPress={() => { editPresetName(newpresetname) }}>
-                                                        <MaterialIcons name="save-as" size={24} color="orange" />
-                                                    </TouchableOpacity>
-                                                    <TouchableOpacity style={{ width: 30, alignContent: 'center', alignItems: 'center' }} onPress={() => { setEditPresetName(false) }}>
-                                                        <MaterialIcons name="not-interested" size={24} color="red" />
-                                                    </TouchableOpacity>
+                                    {isEdittingPresetName ? (
+                                        <View>
+                                            <View style={styles.presetDropdown}>
+                                                <View style={{ width: 175 }}>
+                                                    <TextInput
+                                                        onChangeText={setNewPresetName}
+                                                        value={newpresetname}
+                                                        placeholder="ชื่อ Preset"
+                                                        style={{ fontSize: 15 }}
+                                                    />
                                                 </View>
-                                            ) : (
-                                                <View style={{ flexDirection: 'row', flexWrap: 'wrap', left: 12 }}>
-                                                    <View style={{ width: 30, alignContent: 'center', alignItems: 'center', height: 0 }}>
-                                                        <MaterialIcons name="not-interested" size={24} color="red" />
-
+                                                {newpresetname != obj.presetName ? (
+                                                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', left: 12 }}>
+                                                        <TouchableOpacity style={{ width: 30, alignContent: 'center', alignItems: 'center' }} onPress={() => { editPresetName(newpresetname) }}>
+                                                            <MaterialIcons name="save-as" size={24} color="orange" />
+                                                        </TouchableOpacity>
+                                                        <TouchableOpacity style={{ width: 30, alignContent: 'center', alignItems: 'center' }} onPress={() => { setEditPresetName(false) }}>
+                                                            <MaterialIcons name="not-interested" size={24} color="red" />
+                                                        </TouchableOpacity>
                                                     </View>
-                                                    <TouchableOpacity style={{ width: 30, alignContent: 'center', alignItems: 'center' }} onPress={() => { setEditPresetName(false) }}>
-                                                        <MaterialIcons name="not-interested" size={24} color="red" />
+                                                ) : (
+                                                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', left: 12 }}>
+                                                        <View style={{ width: 30, alignContent: 'center', alignItems: 'center', height: 0 }}>
+                                                            <MaterialIcons name="not-interested" size={24} color="red" />
 
-                                                    </TouchableOpacity>
-                                                </View>
+                                                        </View>
+                                                        <TouchableOpacity style={{ width: 30, alignContent: 'center', alignItems: 'center' }} onPress={() => { setEditPresetName(false) }}>
+                                                            <MaterialIcons name="not-interested" size={24} color="red" />
+
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                )}
+
+
+
+                                            </View>
+                                        </View>
+                                    ) : (
+
+                                        <View style={styles.presetDropdown}>
+                                            {presets && presets.length !== undefined && presets.length > 0 ? (
+                                                <Picker
+                                                    selectedValue={obj._id}
+                                                    onValueChange={(itemValue, itemIndex) =>
+                                                        setNewPreset(itemValue)
+                                                    }
+                                                    mode='dropdown'
+                                                    style={{ width: 200, borderRadius: 20 }}
+                                                >
+                                                    {presets.map((item, index) => (
+                                                        <Picker.Item label={item.presetName} value={item._id} />
+
+                                                    ))}
+                                                </Picker>
+                                            ) : (
+                                                <View></View>
                                             )}
 
+                                            <TouchableOpacity style={{ width: 30, alignContent: 'center', alignItems: 'center' }} onPress={() => { setModal(true) }}>
+                                                <MaterialIcons name="add" size={24} color="orange" />
+                                            </TouchableOpacity>
+                                            <TouchableOpacity style={{ width: 30, alignContent: 'center', alignItems: 'center' }} onPress={() => { setEditPresetName(true), setNewPresetName(obj.presetName) }}>
+                                                <MaterialIcons name="edit" size={20} color="orange" />
+                                            </TouchableOpacity>
+                                            <TouchableOpacity style={{ width: 30, alignContent: 'center', alignItems: 'center' }} onPress={() => { deletePreset(obj._id) }}>
+                                                <MaterialIcons name="delete" size={20} color="red" />
+                                            </TouchableOpacity>
+
+                                        </View>
+                                    )}
+                                    {obj?.tables?.length > 0 ? (
+                                        <View style={styles.dragablecontainer}>
+                                            {obj.tables.map((item, index) => (
+                                                <StaticTable
+                                                    key={index}
+                                                    id={item._id}
+                                                    x={item.x}
+                                                    y={item.y}
+                                                    item={item}
+                                                    changeStatus={changeStatus}
+                                                />
+                                            ))}
+                                        </View>
+                                    ) : (
+                                        <View style={styles.dragablecontainer}>
 
 
                                         </View>
-                                    </View>
-                                ) : (
+                                    )}
 
-                                    <View style={styles.presetDropdown}>
-                                        {presets.length > 0 ? (
-                                            <Picker
-                                                selectedValue={obj._id}
-                                                onValueChange={(itemValue, itemIndex) =>
-                                                    setNewPreset(itemValue)
-                                                }
-                                                mode='dropdown'
-                                                style={{ width: 200, borderRadius: 20 }}
-                                            >
-                                                {presets.map((item, index) => (
-                                                    <Picker.Item label={item.presetName} value={item._id} />
+                                    <TouchableOpacity style={[styles.editButton]} onPress={() => { navigation.navigate("EditTables", { restaurant_id: restaurant._id }) }}>
+                                        <Text style={styles.editButtonText}>แก้ไขที่นั่ง</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            ) : (
+                                <View>
+                                    <TouchableOpacity style={[styles.editButton]} onPress={() => { setModal(true) }}>
+                                        <Text style={styles.editButtonText}>สร้าง Preset ใหม่</Text>
+                                    </TouchableOpacity>
+                                </View>
 
-                                                ))}
-                                            </Picker>
-                                        ) : (
-                                            <View></View>
-                                        )}
+                            )}
+                        </View>
 
-                                        <TouchableOpacity style={{ width: 30, alignContent: 'center', alignItems: 'center' }} onPress={() => { setModal(true) }}>
-                                            <MaterialIcons name="add" size={24} color="orange" />
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={{ width: 30, alignContent: 'center', alignItems: 'center' }} onPress={() => { setEditPresetName(true), setNewPresetName(obj.presetName) }}>
-                                            <MaterialIcons name="edit" size={20} color="orange" />
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={{ width: 30, alignContent: 'center', alignItems: 'center' }} onPress={() => { deletePreset(obj._id) }}>
-                                            <MaterialIcons name="delete" size={20} color="red" />
-                                        </TouchableOpacity>
 
-                                    </View>
-                                )}
-                                {obj.tables.length != undefined ? (
-                                    <View style={styles.dragablecontainer}>
-                                        {obj.tables.map((item, index) => (
-                                            <StaticTable key={index} id={item._id} x={item.x} y={item.y} item={item} changeStatus={changeStatus}>
-                                            </StaticTable>
-                                        ))}
-                                    </View>
 
-                                ) : (
-                                    <View></View>
-                                )}
-
-                                <TouchableOpacity style={[styles.editButton]} onPress={() => { navigation.navigate("EditTables", { restaurant_id: restaurant._id }) }}>
-                                    <Text style={styles.editButtonText}>แก้ไขที่นั่ง</Text>
-                                </TouchableOpacity>
-                            </View>
-                        ) : (
-                            <View>
-                                <TouchableOpacity style={[styles.editButton]} onPress={() => { setModal(true) }}>
-                                    <Text style={styles.editButtonText}>สร้าง Preset ใหม่</Text>
-                                </TouchableOpacity>
-                            </View>
-
-                        )
-
-                        }
 
                     </View>
                     <Modal

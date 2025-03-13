@@ -80,7 +80,7 @@ const AllReservations = ({ navigation, route }) => {
                                     </View>
 
 
-                                    <Text style={styles.title5}>โต๊ะ {item.reservedTables.map(table => table.tableName).join(', ')}</Text>
+                                    <Text style={styles.title5}>โต๊ะ {item.reservedTables.map(table => table.text).join(', ')}</Text>
 
                                     <View style={styles.flexstatus}>
                                         <Text style={[styles.statusres,

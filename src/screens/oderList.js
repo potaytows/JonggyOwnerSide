@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import axios from 'axios';  
+import axios from 'axios';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
@@ -63,11 +63,21 @@ const OrderListScreen = ({ route, navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>รายละเอียดการจอง</Text>
+            <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
+                <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
+                    <MaterialIcons name="arrow-back-ios" size={24} color="white"
+                        onPress={() => navigation.dispatch(CommonActions.goBack())} />
+                </View>
+                <Text style={styles.headerTitle}>
+                    การจอง
+                </Text>
+            </LinearGradient>
+            <Text style={styles.headerText}>รายละเอียดการจอง</Text>
             <View style={styles.details}>
                 <Text>รหัสการจอง: {reservation._id}</Text>
-                <Text>เวลา: {reservation.createdAt}</Text>
-                <Text>โต๊ะ: {reservation.reservedTables.map(table => table.tableName).join(', ')}</Text>
+                <Text>เวลา:  {moment(reservation.startTime).utc().format('Do MMMM HH:mm')} - {moment(reservation.endTime).utc().format('Do MMMM HH:mm')}</Text>
+                <Text>โต๊ะ: {reservation.reservedTables.map(table => table.text).join(', ')}</Text>
+
                 {/* Add more details as needed */}
             </View>
             <TouchableOpacity style={styles.button} onPress={handleConfirmReservation}>
@@ -86,7 +96,7 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: 'white',
     },
-    header: {
+    headerText: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
@@ -106,7 +116,21 @@ const styles = StyleSheet.create({
     buttonText: {
         color: 'white',
         textAlign: 'center',
-    },
+    }
+    , header: {
+        height: 109,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        flexDirection: 'row',
+
+    }, headerTitle: {
+        color: 'white',
+        fontSize: 36,
+        fontWeight: 'bold',
+        marginLeft: 20,
+        marginTop: 45,
+
+    }
 });
 
 export default OrderListScreen;
