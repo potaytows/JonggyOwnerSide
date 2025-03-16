@@ -92,7 +92,7 @@ const Menus = ({ navigation }) => {
                                         <Image
                                             width={70}
                                             height={70}
-                                            source={{ uri: apiheader + '/image/getMenuIcon/' + item._id+"/"+Math.round(Math.random()*1000000000).toString() }}
+                                            source={{ uri: `${apiheader}/image/getMenuIcon/${item._id}?timestamp=${new Date().getTime()}` }}
                                             borderRadius={5}
                                         />
                                         <Text style={styles.menuTitle} adjustsFontSizeToFit={true} numberOfLines={2}>
