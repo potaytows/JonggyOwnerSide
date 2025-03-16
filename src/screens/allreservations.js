@@ -20,7 +20,6 @@ const AllReservations = ({ navigation, route }) => {
             const response = await axios.get(apiheader + '/reservation/getReservationByRestaurantID/' + route.params.restaurant_id);
             const result = await response.data;
             setReservationList(result);
-            console.log(result);
         } catch (error) {
             console.error(error);
         } finally {

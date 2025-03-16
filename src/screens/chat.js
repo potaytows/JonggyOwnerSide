@@ -25,7 +25,6 @@ const ChatScreen = ({ route,navigation}) => {
                 const response = await axios.get(apiheader + '/chat/newChat/' + reservationID);
                 setMessages(response.data.obj.messages || []);
                 setRestaurant(response.data.obj.restaurant || null);
-                console.log(messages)
             } catch (error) {
                 console.error(error);
             }
@@ -38,21 +37,17 @@ const ChatScreen = ({ route,navigation}) => {
     useFocusEffect(
         React.useCallback(() => {
             const userType = "restaurant";
-            console.log('Joining room:', reservationID);
             socket.emit('joinRoom', reservationID, userType);
 
             socket.on('message', (message) => {
-                console.log('Received message:', message);
                 setMessages(prevMessages => [...prevMessages, message]);
             });
 
             socket.on('updateMessages', (updatedMessages) => {
-                console.log('Received updated messages:', updatedMessages);
                 setMessages(updatedMessages);
             });
 
             return () => {
-                console.log('Leaving room:', reservationID);
                 socket.emit('leaveRoom', reservationID);
                 socket.off('message');
                 socket.off('updateMessages');
@@ -62,10 +57,8 @@ const ChatScreen = ({ route,navigation}) => {
 
     const sendMessage = async () => {
         if (newMessage.trim()) {
-            console.log('Sending message:', newMessage);
             socket.emit('chatMessage', { reservationID, sender: 'restaurant', message: newMessage });
             setNewMessage('');
-            console.log(messages)
             scrollViewRef.current?.scrollToEnd({ animated: true });
         }
     };

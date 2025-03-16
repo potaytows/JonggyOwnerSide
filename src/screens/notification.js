@@ -8,9 +8,10 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
-const NotificationScreen = () => {
+const NotificationScreen = ({ route, navigation }) => {
     const [latestMessages, setLatestMessages] = useState([]);
     const [restaurantID, setRestaurantID] = useState(null);
+
     const getRestaurantID = async () => {
         try {
             const userauth = await SecureStore.getItemAsync('userAuth');
@@ -35,6 +36,7 @@ const NotificationScreen = () => {
                 try {
                     const response = await axios.get(`${apiheader}/chat/latestMessages/${restaurantID}`);
                     setLatestMessages(response.data.latestMessages);
+
                 } catch (error) {
                     console.error('Error fetching latest messages:', error);
                 }
@@ -44,15 +46,18 @@ const NotificationScreen = () => {
         getRestaurantID();
         fetchLatestMessages();
     }, [restaurantID]);
+    const handlemySupport = (reservationID) => {
+        navigation.navigate('chat', { reservationID: reservationID });
+    };
 
     return (
         <SafeAreaView style={styles.container}>
-             <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
+            <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
 
-                    <Text style={styles.headerTitle}>
-                        การแจ้งเตือน
-                    </Text>
-                </LinearGradient>
+                <Text style={styles.headerTitle}>
+                    การแจ้งเตือน
+                </Text>
+            </LinearGradient>
 
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                 <TouchableOpacity style={styles.chats}>
@@ -65,17 +70,29 @@ const NotificationScreen = () => {
             </View>
             <ScrollView>
                 {latestMessages.map((message) => (
-                    <TouchableOpacity key={message.id} style={styles.messageItem}>
+                    <TouchableOpacity key={message.id} style={styles.messageItem} onPress={() => handlemySupport(message.reservationID)}>
                         <View style={styles.messageContent}>
                             <View style={styles.imgProfile}></View>
                             <View style={styles.textshow}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Text style={styles.username}>ชื่อผู้จอง: {message.username}</Text>
                                     <Text style={styles.timestamp}>
-                                        {message.timestamp
-                                            ? new Date(message.timestamp).toLocaleDateString() + ' ' +
-                                            new Date(message.timestamp).toLocaleTimeString()
-                                            : 'No timestamp'}
+                                        {message.timestamp ? (
+                                            (() => {
+                                                const messageDate = new Date(message.timestamp);
+                                                const today = new Date();
+                                                const isToday =
+                                                    messageDate.getDate() === today.getDate() &&
+                                                    messageDate.getMonth() === today.getMonth() &&
+                                                    messageDate.getFullYear() === today.getFullYear();
+
+                                                return isToday
+                                                    ? messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) // แสดงแค่เวลา
+                                                    : messageDate.toLocaleDateString() + ' ' + messageDate.toLocaleTimeString(); // แสดงวันที่ + เวลา
+                                            })()
+                                        ) : (
+                                            'No timestamp'
+                                        )}
                                     </Text>
                                 </View>
                                 <Text style={styles.lastMessage}>{message.lastMessage}</Text>
@@ -101,7 +118,7 @@ const styles = StyleSheet.create({
     },
     messageContent: {
         flexDirection: 'row',
-        alignItems:'center'
+        alignItems: 'center'
     },
     username: {
         fontWeight: 'bold',
@@ -149,9 +166,9 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         backgroundColor: 'gray'
     },
-    textshow:{
-        flex:1,
-        marginLeft:10
+    textshow: {
+        flex: 1,
+        marginLeft: 10
     }, header: {
         height: 109,
         borderBottomLeftRadius: 10,
