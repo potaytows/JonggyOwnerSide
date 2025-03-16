@@ -9,12 +9,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import Text from '../components/Text';
 import { CommonActions } from '@react-navigation/native';
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from 'expo-secure-store'
+import { Dimensions } from 'react-native';
 
-
-
-
-
+const screenWidth = Dimensions.get('window').width;
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
 const Table = ({ route, navigation }) => {
@@ -486,7 +484,7 @@ const styles = StyleSheet.create({
 
     },
     dragablecontainer: {
-        width: 380,
+        width: screenWidth * 0.96,
         height: 450,
         alignSelf: 'center',
         marginTop: 40,
