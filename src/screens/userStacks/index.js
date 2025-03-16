@@ -15,6 +15,9 @@ const Index = ({ navigation }) => {
         console.log('cleared Auth')
         navigation.dispatch(StackActions.replace('Login'));
     }
+    const handleHelpCenter = () => {
+        navigation.navigate('helpCenter');
+    };
 
     return (
         <View style={styles.container}>
@@ -24,6 +27,11 @@ const Index = ({ navigation }) => {
                     ผู้ใช้
                 </Text>
             </LinearGradient>
+            <View>
+                <TouchableOpacity onPress={handleHelpCenter}>
+                    <Text style={styles.heleCenter}>ศูยน์ช่วยเหลือ</Text>
+                    </TouchableOpacity>
+            </View>
             <TouchableOpacity style={styles.button} onPress={ClearLogin} >
                 <Text style={styles.buttonText}>Logout</Text>
             </TouchableOpacity>
@@ -58,7 +66,12 @@ const styles = StyleSheet.create({
         marginTop: 45,
 
     },buttonText:{
-        color:'white'
+        color:'white',
+        textAlign:'center'
+    },
+    heleCenter:{
+        textAlign:'center',
+        marginTop:20
     }
 
 });

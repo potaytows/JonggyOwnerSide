@@ -57,7 +57,7 @@ const Menus = ({ navigation }) => {
                             onPress={() => navigation.dispatch(CommonActions.goBack())} />
                     </View>
                     <Text style={styles.headerTitle}>
-                        แก้ไขเมนูอาหาร
+                        เมนูอาหาร
                     </Text>
                 </LinearGradient>
             <View style={styles.loadingindi}>

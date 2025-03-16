@@ -16,6 +16,8 @@ import AllSettingScreen from '../screens/allsetting';
 import SetContactLocationScreen from '../screens/setContactLocation';
 import PresetsScreen from '../screens/preset';
 import EditRestaurantScreen from '../screens/editRestaurantScreen';
+import HelpCenterScreen from '../screens/helpCenter';
+import SupportFormScreen from '../screens/supportForm';
 
 const Stack = createStackNavigator();
 
@@ -38,8 +40,8 @@ const Stacks = () => {
                         <Stack.Screen name="setContactLocation" component={SetContactLocationScreen} options={{ title: "" ,headerShown:false}} />
                         <Stack.Screen name="Presets" component={PresetsScreen} options={{ title: "Select Preset",headerShown:false }} />
                         <Stack.Screen name="EditRestaurant" component={EditRestaurantScreen} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
-
-
+                        <Stack.Screen name="helpCenter" component={HelpCenterScreen} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
+                        <Stack.Screen name="supportForm" component={SupportFormScreen} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
 
                 </Stack.Navigator>
         )
