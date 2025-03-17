@@ -15,11 +15,11 @@ import axios from 'axios';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
 
-const updateTable = async (xTrans, yTrans, id, restaurant_id,item) => {
+const updateTable = async (xTrans, yTrans, id,) => {
 
     try {
 
-        const response = await axios.put(apiheader + '/tables/edit/' +id+"/"+restaurant_id, { x:xTrans,y:yTrans });
+        const response = await axios.put(apiheader + '/tables/edit/' +id, { x:xTrans,y:yTrans });
     } catch (error) {
         console.error(error);
     }
@@ -100,8 +100,8 @@ const Dragable = (props) => {
             isGestureActive.value = true;
         })
         .onChange((evt) => {
-            translateX.value += bound(translateX.value, evt.changeX, -100, 345);
-            translateY.value += bound(translateY.value, evt.changeY, -100, 400);
+            translateX.value += bound(translateX.value, evt.changeX, -100, 500);
+            translateY.value += bound(translateY.value, evt.changeY, -100, 500);
         })
         .onEnd(() => {
             // const gridMultiplier = 25
