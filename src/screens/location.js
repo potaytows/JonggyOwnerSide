@@ -83,8 +83,9 @@ const LocationScreen = ({ route, navigation }) => {
     }
 
     return (
-        <ScrollView>
-            <View style={styles.container}>
+        <View style={styles.container}>
+
+            <ScrollView>
                 <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
                     <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
                         <MaterialIcons name="arrow-back-ios" size={24} color="white"
@@ -94,45 +95,55 @@ const LocationScreen = ({ route, navigation }) => {
                         การจอง
                     </Text>
                 </LinearGradient>
-                <View style={styles.details}>
-                    <Text>รหัสการจอง: {reservation._id}</Text>
-                    <Text>เวลา:  {moment(reservation.startTime).utc().format('Do MMMM HH:mm')} - {moment(reservation.endTime).utc().format('Do MMMM HH:mm')}</Text>
-                    <Text>โต๊ะ: {reservation.reservedTables.map(table => table.text).join(', ')}</Text>
-                </View>
+                <View style={styles.container2}>
 
-                <Text style={styles.sectionTitle}>รายการอาหาร</Text>
-                <View style={styles.MenuTitle}>
-                    <View style={styles.MenuLi1}><Text style={styles.Ui}>เมนู</Text></View>
-                    <View style={styles.MenuLi2}><Text style={styles.Ui}></Text></View>
-                    <View style={styles.MenuLi3}><Text style={styles.Ui}>จำนวน</Text></View>
-                    <View style={styles.MenuLi4}><Text style={styles.totalPrice}>ราคา</Text></View>
-                </View>
-                {reservation.orderedFood.map((order, index) => (
-                    <View key={index} style={styles.foodContainer}>
-                        <View style={styles.foodDetails}>
-                            <View style={styles.MenuTitle}>
-                                <View style={styles.MenuLi1}>
-                                    {order.selectedMenuItem.map((item, itemIndex) => (
-                                        <Text key={itemIndex} style={styles.foodItem}>{item.menuName}</Text>
-                                    ))}
-                                </View>
-                                <View style={styles.MenuLi2}>
-                                    {order.selectedAddons.map((addon, addonIndex) => (
-                                        <Text key={addonIndex} style={styles.addonItem}>{addon.AddOnName}</Text>
-                                    ))}
-                                </View>
-                                <View style={styles.MenuLi3}>
-                                    <Text style={styles.Count}>8</Text>
-                                </View>
-                                <View style={styles.MenuLi4}>
-                                    <Text style={styles.totalPrice}>฿{order.totalPrice}</Text>
+                    <View style={[styles.details,
+                    reservation.status === "ยืนยันแล้ว" && { borderColor: 'green' },
+                    reservation.status === "ยกเลิกการจองแล้ว" && { borderColor: 'red' }]}>
+                        <Text>รหัสการจอง: {reservation._id}</Text>
+                        <Text>เวลา:  {moment(reservation.startTime).utc().format('Do MMMM HH:mm')} - {moment(reservation.endTime).utc().format('Do MMMM HH:mm')}</Text>
+
+                        <Text>โต๊ะ: {reservation.reservedTables.map(table => table.text).join(', ')}</Text>
+                        <Text style={[styles.statusres,
+                        reservation.status === "ยืนยันแล้ว" && { color: 'green' },
+                        reservation.status === "ยกเลิกการจองแล้ว" && { color: 'red' }]}>{reservation.status}</Text>
+                    </View>
+                    <View style={styles.cardmanu}>
+                        <Text style={styles.sectionTitle}>รายการอาหาร</Text>
+                        <View style={styles.MenuTitle}>
+                            <View style={styles.MenuLi1}><Text style={styles.Ui}>เมนู</Text></View>
+                            <View style={styles.MenuLi2}><Text style={styles.Ui}></Text></View>
+                            <View style={styles.MenuLi3}><Text style={styles.Ui}>จำนวน</Text></View>
+                            <View style={styles.MenuLi4}><Text style={styles.totalPrice}>ราคา</Text></View>
+                        </View>
+
+                        {reservation.orderedFood.map((order, index) => (
+                            <View key={index} style={styles.foodContainer}>
+                                <View style={styles.foodDetails}>
+                                    <View style={styles.MenuTitle}>
+                                        <View style={styles.MenuLi1}>
+                                            {order.selectedMenuItem.map((item, itemIndex) => (
+                                                <Text key={itemIndex} style={styles.foodItem}>{item.menuName}</Text>
+                                            ))}
+                                        </View>
+                                        <View style={styles.MenuLi2}>
+                                            {order.selectedAddons.map((addon, addonIndex) => (
+                                                <Text key={addonIndex} style={styles.addonItem}>{addon.AddOnName}</Text>
+                                            ))}
+                                        </View>
+                                        <View style={styles.MenuLi3}>
+                                            <Text style={styles.Count}>{order.Count}</Text>
+                                        </View>
+                                        <View style={styles.MenuLi4}>
+                                            <Text style={styles.totalPrice}>฿{order.totalPrice}</Text>
+                                        </View>
+                                    </View>
                                 </View>
                             </View>
-                        </View>
+                        ))}
+                        <Text style={styles.totalReservation}>ราคารวม ฿{reservation.total}</Text>
                     </View>
-                ))}
-
-                <Text style={styles.totalReservation}>ราคารวม ฿{reservation.total}</Text>
+                </View>
                 {location && (
                     <MapView
                         style={styles.map}
@@ -183,22 +194,26 @@ const LocationScreen = ({ route, navigation }) => {
                 <TouchableOpacity style={styles.chat} onPress={handleButtonPress}>
                     <View style={styles.image}></View>
                     <View style={styles.buttonChat}>
-                        <Text style={styles.textChat}>แชท</Text>
+                        <Text style={styles.buttonText}>แชท</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={handleCancelReservation}>
-                    <Text style={styles.buttonText}>ยกเลิกการจอง</Text>
+                    <Text style={styles.buttonTexts}>ยกเลิกการจอง</Text>
                 </TouchableOpacity>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View>
+
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
         paddingBottom: 20
+    },
+    container2:{
+marginLeft:15,
+marginRight:15
     },
     chat: {
         flexDirection: 'row',
@@ -216,10 +231,36 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         color: 'white',
     },
+    buttonText: {
+        backgroundColor: 'white',
+        padding: 10,
+        borderRadius: 10,
+        color: 'gray',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 5,
+    },
     buttonChat: {
         flex: 1,
         justifyContent: 'center',
         marginLeft: 5,
+    },
+    cardmanu: {
+        backgroundColor: 'white',
+        padding: 10,
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 5,
     },
     details: {
         margin: 10,
@@ -274,9 +315,26 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         marginTop: 45,
 
-    }, buttonText: {
+    }, buttonTexts: {
         marginLeft: 10,
-    }
+    },
+    details: {
+        marginTop:15,
+        marginBottom: 20,
+        borderLeftWidth: 10,
+        borderColor: 'gray',
+        borderRadius: 10,
+        backgroundColor: 'white',
+        padding: 10,
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 5,
+    },
 
 });
 
