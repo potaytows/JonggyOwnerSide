@@ -2,6 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
+import moment from 'moment';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
@@ -72,20 +75,55 @@ const OrderListScreen = ({ route, navigation }) => {
                     การจอง
                 </Text>
             </LinearGradient>
-            <Text style={styles.headerText}>รายละเอียดการจอง</Text>
-            <View style={styles.details}>
-                <Text>รหัสการจอง: {reservation._id}</Text>
-                <Text>เวลา:  {moment(reservation.startTime).utc().format('Do MMMM HH:mm')} - {moment(reservation.endTime).utc().format('Do MMMM HH:mm')}</Text>
-                <Text>โต๊ะ: {reservation.reservedTables.map(table => table.text).join(', ')}</Text>
+            <View style={styles.content}>
+                <Text style={styles.headerText}>รายละเอียดการจอง</Text>
+                <View style={styles.details}>
+                    <Text>รหัสการจอง: {reservation._id}</Text>
+                    <Text>เวลา:  {moment(reservation.startTime).utc().format('Do MMMM HH:mm')} - {moment(reservation.endTime).utc().format('Do MMMM HH:mm')}</Text>
+                    <Text>โต๊ะ: {reservation.reservedTables.map(table => table.text).join(', ')}</Text>
 
-                {/* Add more details as needed */}
+                    {/* Add more details as needed */}
+                </View>
+                <Text style={styles.sectionTitle}>รายการอาหาร</Text>
+                <View style={styles.MenuTitle}>
+                    <View style={styles.MenuLi1}><Text style={styles.Ui}>เมนู</Text></View>
+                    <View style={styles.MenuLi2}><Text style={styles.Ui}></Text></View>
+                    <View style={styles.MenuLi3}><Text style={styles.Ui}>จำนวน</Text></View>
+                    <View style={styles.MenuLi4}><Text style={styles.totalPrice}>ราคา</Text></View>
+                </View>
+                {reservation.orderedFood.map((order, index) => (
+                    <View key={index} style={styles.foodContainer}>
+                        <View style={styles.foodDetails}>
+                            <View style={styles.MenuTitle}>
+                                <View style={styles.MenuLi1}>
+                                    {order.selectedMenuItem.map((item, itemIndex) => (
+                                        <Text key={itemIndex} style={styles.foodItem}>{item.menuName}</Text>
+                                    ))}
+                                </View>
+                                <View style={styles.MenuLi2}>
+                                    {order.selectedAddons.map((addon, addonIndex) => (
+                                        <Text key={addonIndex} style={styles.addonItem}>{addon.AddOnName}</Text>
+                                    ))}
+                                </View>
+                                <View style={styles.MenuLi3}>
+                                    <Text style={styles.Count}>8</Text>
+                                </View>
+                                <View style={styles.MenuLi4}>
+                                    <Text style={styles.totalPrice}>฿{order.totalPrice}</Text>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                ))}
+
+                <Text style={styles.totalReservation}>ราคารวม ฿{reservation.total}</Text>
+                <TouchableOpacity style={styles.button} onPress={handleConfirmReservation}>
+                    <Text style={styles.buttonText}>ยืนยันการจอง</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={handleCancelReservation}>
+                    <Text style={styles.buttonText}>ยกเลิกการจอง</Text>
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.button} onPress={handleConfirmReservation}>
-                <Text style={styles.buttonText}>ยืนยันการจอง</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleCancelReservation}>
-                <Text style={styles.buttonText}>ยกเลิกการจอง</Text>
-            </TouchableOpacity>
         </View>
     );
 };
@@ -93,8 +131,10 @@ const OrderListScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
         backgroundColor: 'white',
+    },
+    content:{
+        margin:15
     },
     headerText: {
         fontSize: 24,
@@ -130,7 +170,36 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         marginTop: 45,
 
-    }
+    },
+    MenuTitle: {
+        flexDirection: 'row',
+        margin: 10,
+    },
+    MenuLi1: {
+        flex: 3,
+    },
+    MenuLi2: {
+        flex: 3,
+    },
+    MenuLi3: {
+        flex: 2,
+    },
+    MenuLi4: {
+        flex: 1,
+    },
+    Count: {
+        marginLeft: 10,
+    },
+    totalPrice: {
+        fontWeight: 'bold',
+        textAlign: 'right',
+    },
+    totalReservation: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        margin: 20,
+        textAlign: 'right',
+    },
 });
 
 export default OrderListScreen;

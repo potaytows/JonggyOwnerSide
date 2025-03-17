@@ -204,14 +204,17 @@ const ShowTables = ({ route, navigation }) => {
                                     ) : (
 
                                         <View style={styles.presetDropdown}>
+                                            <Text style={styles.LayoutText}>รูปแบบ</Text>
                                             {presets && presets.length !== undefined && presets.length > 0 ? (
+
                                                 <Picker
                                                     selectedValue={obj._id}
                                                     onValueChange={(itemValue, itemIndex) =>
                                                         setNewPreset(itemValue)
                                                     }
                                                     mode='dropdown'
-                                                    style={{ width: 200, borderRadius: 20 }}
+                                                    style={styles.Layout}
+
                                                 >
                                                     {presets.map((item, index) => (
                                                         <Picker.Item label={item.presetName} value={item._id} />
@@ -393,7 +396,7 @@ const styles = StyleSheet.create({
         alignContent: 'center',
         alignItems: 'center',
         alignSelf: 'center',
-        height: 50
+        height: 50,
     }, AddPreset: {
         width: 350,
         alignSelf: 'center',
@@ -462,6 +465,28 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         margin: 5,
 
+    },
+    Layout: {
+        width: 200,
+        backgroundColor: 'white',
+        shadowOffset: {
+            width: 0,
+            height: 0.1,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 0.61,
+        elevation: 5,
+        borderRadius: 20,
+        overflow: 'hidden',
+    },
+    PickerR: {
+        flex: 1,
+        backgroundColor: 'red',
+
+    },
+    LayoutText: {
+        marginRight: 10,
+        fontSize: 16
     }
 });
 
