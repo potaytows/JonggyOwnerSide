@@ -10,9 +10,11 @@ import axios from 'axios';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
-const updateTable = async (xTrans, yTrans, id, restaurant_id, item) => {
+
+const updateTable = async (xTrans, yTrans, id,) => {
+
     try {
-        const response = await axios.put(apiheader + '/tables/edit/' + id + "/" + restaurant_id, { x: xTrans, y: yTrans });
+        const response = await axios.put(apiheader + '/tables/edit/' +id, { x:xTrans,y:yTrans });
     } catch (error) {
         console.error(error);
     }
@@ -65,6 +67,7 @@ const Dragable = (props) => {
             // Apply boundary constraints and grid snapping for x and y translations
             translateX.value += bound(translateX.value, evt.changeX, -100, maxX);
             translateY.value += bound(translateY.value, evt.changeY, -100, maxY);
+
         })
         .onEnd(() => {
             // Snap the final position to the nearest grid cell

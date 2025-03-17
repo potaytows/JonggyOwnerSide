@@ -147,7 +147,7 @@ const Table = ({ route, navigation }) => {
                 ToastAndroid.showWithGravityAndOffset('ความสูงมีค่าได้ไม่เกิน 440เท่านั้น!', ToastAndroid.SHORT, ToastAndroid.BOTTOM, 25, 50)
             } else {
                 console.log("called")
-                const response = await axios.put(apiheader + '/tables/edit/' + edittable._id+"/"+route.params.restaurant_id, { width: parseInt(newShapeWidth), height: parseInt(newShapeHeight), color: selectedColor });
+                const response = await axios.put(apiheader + '/tables/edit/' + edittable._id, { width: parseInt(newShapeWidth), height: parseInt(newShapeHeight), color: selectedColor });
                 const result = await response.data;
                 getTables();
                 setEditModal(!EditmodalVisible);

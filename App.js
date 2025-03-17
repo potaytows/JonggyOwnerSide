@@ -19,6 +19,7 @@ const App = () => {
 
   const [loaded, error] = useFonts({
     'Kanit-Regular': require('./assets/fonts/Kanit-Regular.ttf'),
+    'Kanit-Bold': require('./assets/fonts/Kanit-Bold.ttf'),
   });
 
 
