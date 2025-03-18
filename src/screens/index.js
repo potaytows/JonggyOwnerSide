@@ -1,6 +1,6 @@
 import { View, SafeAreaView, StyleSheet, StatusBar, FlatList, TextInput, ActivityIndicator, TouchableOpacity, Switch } from 'react-native'
 
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import * as SecureStore from 'expo-secure-store';
 import React, { useEffect, useState } from 'react';
@@ -76,6 +76,7 @@ const Index = ({ navigation }) => {
 
     return (
         <SafeAreaView style={container}>
+            <ScrollView>
             <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={header}>
                 <Text style={headerTitle}>
                     JONGGY
@@ -166,6 +167,20 @@ const Index = ({ navigation }) => {
 
                 </TouchableOpacity>
 
+                <TouchableOpacity onPress={() => navigation.navigate("MyWallet", { restaurant_id: restaurant._id })} activeOpacity={1}>
+                    <View >
+
+                        <View style={styles.item}>
+                            <View style={styles.itemIcon}>
+                            <Ionicons name="wallet" size={90} color="black" />
+
+                            </View>x``
+
+                        </View>
+                        <Text style={styles.itemTitle}>กระเป๋าเงิน</Text>
+                    </View>
+
+                </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate("allsetting", { restaurant_id: restaurant._id })} activeOpacity={1}>
                     <View >
 
@@ -182,6 +197,7 @@ const Index = ({ navigation }) => {
                 </TouchableOpacity>
 
             </View>
+            </ScrollView>
         </SafeAreaView>
 
 

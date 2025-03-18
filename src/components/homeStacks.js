@@ -18,6 +18,9 @@ import PresetsScreen from '../screens/preset';
 import EditRestaurantScreen from '../screens/editRestaurantScreen';
 import HelpCenterScreen from '../screens/helpCenter';
 import SupportFormScreen from '../screens/supportForm';
+import MyWalletScreen from '../screens/myWalllet';
+import BankAccountScreen from '../screens/bankAccount';
+import AddBankAccountScreen from '../screens/addBankAccount';
 
 const Stack = createStackNavigator();
 
@@ -42,6 +45,10 @@ const Stacks = () => {
                         <Stack.Screen name="EditRestaurant" component={EditRestaurantScreen} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
                         <Stack.Screen name="helpCenter" component={HelpCenterScreen} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
                         <Stack.Screen name="supportForm" component={SupportFormScreen} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
+                        <Stack.Screen name="MyWallet" component={MyWalletScreen} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
+                        <Stack.Screen name="bankAccount" component={BankAccountScreen} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
+                        <Stack.Screen name="AddBankAccount" component={AddBankAccountScreen} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
+
 
                 </Stack.Navigator>
         )
