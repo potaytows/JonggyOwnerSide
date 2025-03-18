@@ -128,7 +128,7 @@ const EditRestaurantScreen = ({ route, navigation }) => {
                         {image ? (<Image source={{uri:image.uri}} width={100} height={100} style={styles.restaurantimage} />) : (
                             <View>
                                 {restaurant._id !=undefined &&
-                                    <Image source={{uri:apiheader + '/image/getRestaurantIcon/' + restaurant._id+"/"+Math.round(Math.random()*1000000000).toString()}} width={100} height={100} key={new Date} style={styles.restaurantimage} />
+                                    <Image source={{uri:apiheader + '/image/getRestaurantIcon/' + restaurant._id+"?"+Math.round(Math.random()*1000000000).toString()}} width={100} height={100} key={new Date} style={styles.restaurantimage} />
                                 }
                             </View>
 

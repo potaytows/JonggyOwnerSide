@@ -47,7 +47,7 @@ const Menu = ({ navigation, route }) => {
             const response = await axios.get(apiheader + '/menus/getMenu/' + route.params?.menuid);
             const result = await response.data;
             setMenu(result)
-            setImageUri(apiheader + "/image/getMenuIcon/" + result._id+"/"+Math.round(Math.random()*1000000000).toString())
+            setImageUri(apiheader + "/image/getMenuIcon/" + result._id+"?"+Math.round(Math.random()*1000000000).toString())
             setMenuName(result.menuName.toString());
             setMenuPrice(result.price.toString());
         } catch (error) {
