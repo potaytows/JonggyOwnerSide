@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, CommonActions } from '@react-navigation/native';
 import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import moment from 'moment';
+
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
@@ -82,8 +83,13 @@ const OrderListScreen = ({ route, navigation }) => {
                     <Text>เวลา:  {moment(reservation.startTime).utc().format('Do MMMM HH:mm')} - {moment(reservation.endTime).utc().format('Do MMMM HH:mm')}</Text>
                     <Text>โต๊ะ: {reservation.reservedTables.map(table => table.text).join(', ')}</Text>
 
-                    {/* Add more details as needed */}
+                    <Text>สถานะ:
+                        {(!reservation.payment || reservation.payment.length === 0)
+                            ? "รอการจ่ายเงิน"
+                            : reservation.status}
+                    </Text>
                 </View>
+
                 <Text style={styles.sectionTitle}>รายการอาหาร</Text>
                 <View style={styles.MenuTitle}>
                     <View style={styles.MenuLi1}><Text style={styles.Ui}>เมนู</Text></View>
@@ -133,8 +139,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
     },
-    content:{
-        margin:15
+    content: {
+        margin: 15
     },
     headerText: {
         fontSize: 24,

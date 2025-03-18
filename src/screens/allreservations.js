@@ -69,26 +69,44 @@ const AllReservations = ({ navigation, route }) => {
 
 
                         <View key={index}>
-                            <View style={[styles.reserveCon,
-                            item.status === "ยืนยันแล้ว" && { borderLeftColor: 'green' },
-                            item.status === "ยกเลิกการจองแล้ว" && { borderLeftColor: 'gray' }]}>
+                            <View style={[
+                                styles.reserveCon,
+                                {
+                                    borderLeftColor:
+                                        (!item.payment || item.payment.length === 0) ? 'orange' : // Orange for "รอการจ่ายเงิน"
+                                            item.status === "ยืนยันแล้ว" ? 'green' :
+                                                item.status === "ยกเลิกการจองแล้ว" ? 'gray' :
+                                                    'black' // Default color
+                                }
+                            ]}>
                                 <View style={styles.ReservationList}>
                                     <View style={styles.FlexReserve}>
                                         <Text style={styles.title3}>การจองที่ {index + 1}</Text>
                                         <Text style={styles.title4}>{item.createdAt}</Text>
                                     </View>
 
-
                                     <Text style={styles.title5}>โต๊ะ {item.reservedTables.map(table => table.text).join(', ')}</Text>
 
                                     <View style={styles.flexstatus}>
-                                        <Text style={[styles.statusres,
-                                        item.status === "ยืนยันแล้ว" && { color: 'green' },
-                                        item.status === "ยกเลิกการจองแล้ว" && { color: 'red' }]}>{item.status}</Text>
+                                        <Text style={[
+                                            styles.statusres,
+                                            {
+                                                color:
+                                                    (!item.payment || item.payment.length === 0) ? 'orange' : // Orange for "รอการจ่ายเงิน"
+                                                        item.status === "ยืนยันแล้ว" ? 'green' :
+                                                            item.status === "ยกเลิกการจองแล้ว" ? 'red' :
+                                                                'black' // Default color
+                                            }
+                                        ]}>
+                                            {(!item.payment || item.payment.length === 0) ? "รอการจ่ายเงิน" : item.status}
+                                        </Text>
+
                                         <View style={styles.Xbutton}>
                                             <TouchableOpacity
-                                                style={[styles.button,
-                                                item.status === "ยกเลิกการจองแล้ว" && { backgroundColor: 'grey' }]}
+                                                style={[
+                                                    styles.button,
+                                                    item.status === "ยกเลิกการจองแล้ว" && { backgroundColor: 'grey' }
+                                                ]}
                                                 onPress={() => item.status !== "ยกเลิกการจองแล้ว" && handleButtonPress(item)}
                                                 disabled={item.status === "ยกเลิกการจองแล้ว"}
                                             >
@@ -96,9 +114,9 @@ const AllReservations = ({ navigation, route }) => {
                                             </TouchableOpacity>
                                         </View>
                                     </View>
-
                                 </View>
                             </View>
+
                         </View>
                     )) : <View><Text>กำลังโหลดข้อมูล!</Text></View>}
                 </View>
@@ -165,7 +183,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FF914D',
         padding: 10,
         borderRadius: 5,
-        alignSelf: 'flex-end',        
+        alignSelf: 'flex-end',
     },
     buttonText: {
         color: 'white',
