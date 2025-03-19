@@ -11,6 +11,7 @@ import Text from '../components/Text';
 import { CommonActions } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store'
 import { Dimensions } from 'react-native';
+import moment from 'moment-timezone';
 
 const screenWidth = Dimensions.get('window').width;
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
