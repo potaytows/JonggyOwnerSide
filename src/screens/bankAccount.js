@@ -4,6 +4,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { CommonActions } from '@react-navigation/native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import Text from '../components/Text';
+const apiheader = process.env.EXPO_PUBLIC_apiURI;
+import axios from 'axios';
 
 const BankAccountScreen = ({ route, navigation }) => {
     const restaurant_id = route.params.restaurant_id;
@@ -11,29 +13,47 @@ const BankAccountScreen = ({ route, navigation }) => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [amount, setAmount] = useState('');
-    const [errorMessage, setErrorMessage] = useState(''); // สร้าง state สำหรับข้อความผิดพลาด
+    const [errorMessage, setErrorMessage] = useState('');
+    const [selectedBank, setSelectedBank] = useState('');
+     // สร้าง state สำหรับข้อความผิดพลาด
+    const balance = wallets?.wallet?.balance ?? 0;
 
     const handleButtonAddBank = () => {
         navigation.navigate('AddBankAccount', { restaurant_id: restaurant_id, wallets: wallets._id });
     };
 
-    const handleAmountSubmit = () => {
-        const enteredAmount = parseFloat(amount);
-
-        // ตรวจสอบว่าเป็นตัวเลขหรือไม่
-        if (isNaN(enteredAmount) || enteredAmount <= 0) {
+    const handleAmountSubmit = async () => {
+        const enteredAmount = parseFloat(amount.trim());
+    
+        if (!enteredAmount || enteredAmount <= 0) {
             setErrorMessage('กรุณากรอกจำนวนเงินที่ถูกต้อง');
             return;
         }
-
-        // ตรวจสอบจำนวนเงินไม่เกินยอดคงเหลือ
-        if (enteredAmount > wallets.wallet.balance) {
+        if (enteredAmount > balance) {
             setErrorMessage('จำนวนเงินที่ถอนเกินจากยอดคงเหลือ');
             return;
         }
-
-        // ถ้าไม่มีข้อผิดพลาด ให้ทำการยืนยันการถอน (หรือเพิ่มฟังก์ชันที่ต้องการที่นี่)
-        setErrorMessage('');
+    
+        try {
+            const response = await axios.post(apiheader+'/wallet/withdraw', {
+                restaurant_id,
+                amount: enteredAmount,
+                bankName: selectedBank.bankName,
+                accountName: selectedBank.accountName,
+                accountNumber: selectedBank.accountNumber
+            }
+            );
+            alert(response.data.message);
+            setModalVisible(false);
+            setSelectedBank(null);
+            setAmount('');
+        } catch (error) {
+            if (error.response) {
+                setErrorMessage(error.response.data.message || "เกิดข้อผิดพลาดในการทำรายการ");
+            } else {
+                setErrorMessage("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
+            }
+        }
     };
 
     return (
@@ -52,7 +72,7 @@ const BankAccountScreen = ({ route, navigation }) => {
             <View style={styles.bankAccountContainer}>
                 <Text style={styles.subTitle}>บัญชีธนาคารของคุณ</Text>
                 {wallets.bankAccount.map((wallet, index) => (
-                    <TouchableOpacity key={index} onPress={() => setModalVisible(true)}>
+                    <TouchableOpacity key={index} onPress={() => {setSelectedBank(wallet);setModalVisible(true);}}>
                         <View style={styles.bankAccountCard}>
                             <Text style={styles.bankName}>{wallet.bankName}</Text>
                             <Text style={styles.accountName}>{wallet.accountName}</Text>
@@ -74,7 +94,7 @@ const BankAccountScreen = ({ route, navigation }) => {
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>จำนวนเงินที่ถอนได้</Text>
-                        <Text style={styles.modalTitle}> ฿{wallets && wallets.wallet && wallets.wallet.balance !== undefined ? wallets.wallet.balance : '0'} </Text>
+                        <Text style={styles.modalTitle}> ฿{balance} </Text>
                         <TextInput
                             style={styles.input}
                             placeholder="กรอกจำนวนเงินที่ต้องการถอน"
