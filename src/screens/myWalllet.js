@@ -15,7 +15,7 @@ const MyWalletScreen = ({ navigation, route }) => {
     const [isLoading, setLoading] = useState(false);
     const [reservationList, setReservationList] = useState([]);
     const [wallets, setWallet] = useState(null);
-
+    const [selectedTab, setSelectedTab] = useState('reservations');
     const loadReservations = async () => {
         setLoading(true);
 
@@ -61,7 +61,7 @@ const MyWalletScreen = ({ navigation, route }) => {
         }
     };
     const handleButtonBank = () => {
-            navigation.navigate('bankAccount',{restaurant_id: route.params.restaurant_id, wallets: wallets })
+        navigation.navigate('bankAccount', { restaurant_id: route.params.restaurant_id, wallets: wallets })
     };
     return (
         <SafeAreaView style={styles.container}>
@@ -97,52 +97,64 @@ const MyWalletScreen = ({ navigation, route }) => {
                     </View>
                 </TouchableOpacity>
 
-                <View>
-                    {reservationList.length < 1 && (
-                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
-                            <Text>ร้านของคุณเงียบมาก ;-;!</Text>
-                        </View>
-                    )}
-                    {reservationList && reservationList.length > 0 ? reservationList.map((item, index) => (
 
-                        <TouchableOpacity onPress={() => handleButtonPress(item)}>
-
-                            <View key={index}>
-                                <View style={[styles.reserveCon,
-                                item.status === "ยืนยันแล้ว" && { borderLeftColor: 'green' },
-                                item.status === "ยกเลิกการจองแล้ว" && { borderLeftColor: 'gray' }]}>
-                                    <View style={styles.ReservationList}>
-                                        <View style={styles.FlexReserve}>
-                                            <Text style={styles.title3}>การจองที่ {index + 1}</Text>
-                                            <Text style={styles.title4}>
-                                                {moment(item.createdAt).tz('Asia/Bangkok').format('LLL')}
-                                            </Text>
-
-                                        </View>
-
-
-                                        <Text style={styles.title5}>โต๊ะ {item.reservedTables.map(table => table.text).join(', ')}</Text>
-                                        <View style={styles.flexstatus}>
+                <View style={styles.historyContainer}>
+                    <View style={styles.historys}>
+                        <TouchableOpacity style={[styles.btuhistory, selectedTab === 'reservations' && styles.activeTab]}
+                            onPress={() => setSelectedTab('reservations')}>
+                            <Text style={styles.subTitle}>ประวัติการจอง</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.btuhistory, selectedTab === 'withdrawals' && styles.activeTab]}
+                            onPress={() => setSelectedTab('withdrawals')}>
+                            <Text style={styles.subTitle}>ประวัติการถอนเงิน</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {selectedTab === 'reservations' ? (
+                        reservationList.filter(item => item.status === "ยืนยันแล้ว").length > 0 ? 
+                        reservationList
+                            .filter(item => item.status === "ยืนยันแล้ว")
+                            .map((item, index) => (
+                                <TouchableOpacity key={index} onPress={() => handleButtonPress(item)}>
+                                    <View style={[styles.reserveCon, { borderLeftColor: 'green' }]}>
+                                        <View style={styles.ReservationList}>
+                                            <View style={styles.FlexReserve}>
+                                                <Text style={styles.title3}>การจองที่ {index + 1}</Text>
+                                                <Text style={styles.title4}>
+                                                    {moment(item.createdAt).tz('Asia/Bangkok').format('LLL')}
+                                                </Text>
+                                            </View>
+                                            <View style={styles.flexstatus}>
                                             <Text style={[styles.statusres,
-                                            !item.payment || item.payment.length === 0 ? { color: 'green' } : { color: 'blue' },
+                                            item.payment || item.Payment[0]?.status === 'success' ? { color: 'green' } : { color: 'blue' },
                                             ]}>
-                                                {(!item.Payment || item.Payment.length === 0)
+                                                {(item.Payment[0]?.status === 'failed')
                                                     ? "รอการชำระเงิน"
-                                                    : item.Payment && item.Payment.length > 0
+                                                    : item.Payment && item.Payment[0]?.status === 'success'
                                                         ? "ชำระเงินแล้ว"
                                                         : item.status}
                                             </Text>
-                                            <View style={styles.Xbutton}>
-                                                <Text style={styles.totalPricePerReservation}>{item.total}฿</Text>
+                                                <View style={styles.Xbutton}>
+                                                    <Text style={styles.totalPricePerReservation}>{item.total}฿</Text>
+                                                </View>
                                             </View>
                                         </View>
-
                                     </View>
+                                </TouchableOpacity>
+                            )) : <Text>ไม่มีข้อมูลการจอง</Text>
+                    ) : (
+                        wallets?.wallet?.withdrawals?.length > 0 ? wallets.wallet.withdrawals.map((withdrawal, index) => (
+                            <View key={index} style={styles.transactionCard}>
+                                <View style={styles.flexWithdraw}>
+                                    <Text>{moment(withdrawal.date).tz('Asia/Bangkok').format('LLL')}</Text>
+                                    <Text style={styles.withdrawalamount}>-฿{withdrawal.amount}</Text>
                                 </View>
+                                <Text style={{ color: withdrawal.status === 'approved' ? 'green' : 'gray' ,marginTop:10}}>
+                                    {withdrawal.status}
+                                </Text>
                             </View>
-                        </TouchableOpacity>
+                        )) : <Text>ไม่มีประวัติการถอนเงิน</Text>
+                    )}
 
-                    )) : <View><Text>กำลังโหลดข้อมูล!</Text></View>}
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -171,8 +183,6 @@ const styles = StyleSheet.create({
     reserveCon: {
         padding: 10,
         marginTop: 10,
-        marginLeft: 10,
-        marginRight: 10,
         borderLeftWidth: 10,
         borderLeftColor: 'yellow',
         shadowOffset: {
@@ -265,7 +275,9 @@ const styles = StyleSheet.create({
     },
     totalPricePerReservation: {
         marginLeft: 'auto',
-        marginTop: 10
+        marginTop: 10,
+        fontSize:16,
+        color:'green'
     },
     flexbank: {
         flexDirection: 'row',
@@ -282,7 +294,45 @@ const styles = StyleSheet.create({
     },
     IconNext: {
         marginLeft: 'auto'
+    },
+    historyContainer: {
+        margin: 10
+    },
+    historys: {
+        flexDirection: 'row'
+    },
+    transactionCard: {
+        padding: 10,
+        marginTop: 10,
+        borderLeftWidth: 10,
+        borderLeftColor: 'yellow',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 5,
+        borderRadius: 10,
+        backgroundColor: 'white',
+    },
+    flexWithdraw:{
+        flexDirection:'row'
+    },
+    withdrawalamount:{
+        marginLeft:'auto',
+        color:'red',
+        fontSize:16
+    },
+    activeTab: {
+        borderBottomWidth: 2,
+        borderBottomColor: 'orange',
+    },
+    btuhistory:{
+        marginLeft:10
     }
+    
 
 });
 
