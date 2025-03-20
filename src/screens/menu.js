@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, SafeAreaView, StyleSheet, StatusBar, FlatList, Modal, ActivityIndicator, Alert, ToastAndroid, TouchableOpacity, Image, Button, TextInput } from 'react-native'
+import {View, SafeAreaView, StyleSheet, StatusBar, FlatList, Modal, ActivityIndicator, Alert, ToastAndroid, TouchableOpacity, Image, Button, TextInput } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import AutoHeightImage from 'react-native-auto-height-image'
 import { useFocusEffect } from '@react-navigation/native';
@@ -10,6 +10,7 @@ import { CommonActions } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
 
+import Text from '../components/Text';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 
