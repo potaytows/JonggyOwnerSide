@@ -71,6 +71,28 @@ const LocationScreen = ({ route, navigation }) => {
             ]
         );
     };
+    const handleSuccessReservation = () => {
+        Alert.alert(
+            "ยืนยันการเสร็จสิ้นการจอง",
+            "คุณแน่ใจหรือไม่ว่าต้องการเสร็จสิ้นการจองนี้?",
+            [
+                { text: "ยกเลิก", style: "cancel" },
+                {
+                    text: "ยืนยัน",
+                    onPress: async () => {
+                        try {
+                            await axios.put(`${apiheader}/reservation/successReservation/${reservation._id}`);
+                            Alert.alert("การจองเสร็จสิ้นแล้วเรียบร้อยแล้ว");
+                            navigation.goBack();
+                        } catch (error) {
+                            console.error(error);
+                            Alert.alert("เกิดข้อผิดพลาดในการยกเลิกการจอง");
+                        }
+                    }
+                }
+            ]
+        );
+    };
 
     const handleButtonPress = () => {
         navigation.navigate('Chat', {
@@ -98,14 +120,14 @@ const LocationScreen = ({ route, navigation }) => {
                 <View style={styles.container2}>
 
                     <View style={[styles.details,
-                    reservation.status === "ยืนยันแล้ว" && { borderColor: 'green' },
+                    reservation.status === "ยืนยันแล้ว" || reservation.status === "เสร้จสิ้นแล้ว" &&{ borderColor: 'green' },
                     reservation.status === "ยกเลิกการจองแล้ว" && { borderColor: 'red' }]}>
                         <Text>รหัสการจอง: {reservation._id}</Text>
                         <Text>เวลา:  {moment(reservation.startTime).utc().format('Do MMMM HH:mm')} - {moment(reservation.endTime).utc().format('Do MMMM HH:mm')}</Text>
 
                         <Text>โต๊ะ: {reservation.reservedTables.map(table => table.text).join(', ')}</Text>
                         <Text style={[styles.statusres,
-                        reservation.status === "ยืนยันแล้ว" && { color: 'green' },
+                        reservation.status === "ยืนยันแล้ว" || reservation.status === "เสร้จสิ้นแล้ว" &&{ color: 'green' },
                         reservation.status === "ยกเลิกการจองแล้ว" && { color: 'red' }]}>{reservation.status}</Text>
                     </View>
                     <View style={styles.cardmanu}>
@@ -144,62 +166,73 @@ const LocationScreen = ({ route, navigation }) => {
                         <Text style={styles.totalReservation}>ราคารวม ฿{reservation.total}</Text>
                     </View>
                 </View>
-                {location && (
-                    <MapView
-                        style={styles.map}
-                        initialRegion={{
-                            latitude: location.coordinates.latitude,
-                            longitude: location.coordinates.longitude,
-                            latitudeDelta: 0.005,
-                            longitudeDelta: 0.005,
-                        }}
-                    >
-                        <Marker
-                            coordinate={{
-                                latitude: location.coordinates.latitude,
-                                longitude: location.coordinates.longitude,
-                            }}
-                            title={reservation.restaurant_id.restaurantName}
-                            description={location.address}
-                        />
-                        {receivedLocation && (
-                            <>
+                
+                {reservation.status === 'ยืนยันแล้ว' && (
+                    <View>
+                        {location && (
+                            <MapView
+                                style={styles.map}
+                                initialRegion={{
+                                    latitude: location.coordinates.latitude,
+                                    longitude: location.coordinates.longitude,
+                                    latitudeDelta: 0.005,
+                                    longitudeDelta: 0.005,
+                                }}
+                            >
                                 <Marker
                                     coordinate={{
-                                        latitude: receivedLocation.latitude,
-                                        longitude: receivedLocation.longitude,
-                                    }}
-                                >
-                                    <Image source={require('../../assets/images/gpsNavigation.png')} style={{ height: 40, width: 40 }} />
-                                </Marker>
-
-                                <MapViewDirections
-                                    origin={{
-                                        latitude: receivedLocation.latitude,
-                                        longitude: receivedLocation.longitude,
-                                    }}
-                                    destination={{
                                         latitude: location.coordinates.latitude,
                                         longitude: location.coordinates.longitude,
                                     }}
-                                    apikey='AIzaSyC_fdB6VOZvieVkKPSHdIFhIlVuhhXynyw'
-                                    strokeWidth={5}
-                                    strokeColor="#FF914D"
+                                    title={reservation.restaurant_id.restaurantName}
+                                    description={location.address}
                                 />
-                            </>
+                                {receivedLocation && (
+                                    <>
+                                        <Marker
+                                            coordinate={{
+                                                latitude: receivedLocation.latitude,
+                                                longitude: receivedLocation.longitude,
+                                            }}
+                                        >
+                                            <Image source={require('../../assets/images/gpsNavigation.png')} style={{ height: 40, width: 40 }} />
+                                        </Marker>
+
+                                        <MapViewDirections
+                                            origin={{
+                                                latitude: receivedLocation.latitude,
+                                                longitude: receivedLocation.longitude,
+                                            }}
+                                            destination={{
+                                                latitude: location.coordinates.latitude,
+                                                longitude: location.coordinates.longitude,
+                                            }}
+                                            apikey='AIzaSyC_fdB6VOZvieVkKPSHdIFhIlVuhhXynyw'
+                                            strokeWidth={5}
+                                            strokeColor="#FF914D"
+                                        />
+                                    </>
+                                )}
+                            </MapView>
                         )}
-                    </MapView>
+
+                        <TouchableOpacity style={styles.chat} onPress={handleButtonPress}>
+                            <View style={styles.image}></View>
+                            <View style={styles.buttonChat}>
+                                <Text style={styles.buttonText}>แชท</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <View style={styles.buttonLayout} >
+                            <TouchableOpacity style={styles.button} onPress={handleCancelReservation}>
+                                <Text style={styles.buttonTexts}>ยกเลิกการจอง</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button2} onPress={handleSuccessReservation}>
+                                <Text style={styles.buttonTexts}>เสร็จสิ้นการจอง</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 )}
 
-                <TouchableOpacity style={styles.chat} onPress={handleButtonPress}>
-                    <View style={styles.image}></View>
-                    <View style={styles.buttonChat}>
-                        <Text style={styles.buttonText}>แชท</Text>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={handleCancelReservation}>
-                    <Text style={styles.buttonTexts}>ยกเลิกการจอง</Text>
-                </TouchableOpacity>
             </ScrollView>
         </View>
 
@@ -211,9 +244,9 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingBottom: 20
     },
-    container2:{
-marginLeft:15,
-marginRight:15
+    container2: {
+        marginLeft: 15,
+        marginRight: 15
     },
     chat: {
         flexDirection: 'row',
@@ -315,11 +348,9 @@ marginRight:15
         marginLeft: 20,
         marginTop: 45,
 
-    }, buttonTexts: {
-        marginLeft: 10,
     },
     details: {
-        marginTop:15,
+        marginTop: 15,
         marginBottom: 20,
         borderLeftWidth: 10,
         borderColor: 'gray',
@@ -335,6 +366,28 @@ marginRight:15
 
         elevation: 5,
     },
+    buttonLayout: {
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+    button: {
+        width: 150,
+        backgroundColor: 'red',
+        padding: 10,
+        margin: 5,
+        borderRadius: 10
+    },
+    button2: {
+        width: 150,
+        backgroundColor: '#FF914D',
+        padding: 10,
+        margin: 5,
+        borderRadius: 10
+    },
+    buttonTexts: {
+        textAlign: 'center',
+        color: 'white'
+    }
 
 });
 

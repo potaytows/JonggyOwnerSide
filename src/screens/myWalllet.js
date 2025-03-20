@@ -51,7 +51,7 @@ const MyWalletScreen = ({ navigation, route }) => {
     );
 
     const handleButtonPress = (reservation) => {
-        if (reservation.status === "ยืนยันแล้ว") {
+        if (reservation.status === "เสร็จสิ้นแล้ว") {
             navigation.navigate('location', {
                 reservation: reservation,
                 restaurant_id: route.params.restaurant_id
@@ -110,9 +110,9 @@ const MyWalletScreen = ({ navigation, route }) => {
                         </TouchableOpacity>
                     </View>
                     {selectedTab === 'reservations' ? (
-                        reservationList.filter(item => item.status === "ยืนยันแล้ว").length > 0 ? 
+                        reservationList.filter(item => item.status === "ยืนยันแล้ว" || item.status === "เสร็จสิ้นแล้ว").length > 0 ? 
                         reservationList
-                            .filter(item => item.status === "ยืนยันแล้ว")
+                            .filter(item => item.status === "ยืนยันแล้ว" || item.status === "เสร็จสิ้นแล้ว")
                             .map((item, index) => (
                                 <TouchableOpacity key={index} onPress={() => handleButtonPress(item)}>
                                     <View style={[styles.reserveCon, { borderLeftColor: 'green' }]}>
