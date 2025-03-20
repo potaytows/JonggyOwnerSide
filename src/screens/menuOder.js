@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View,  StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
+import Text from '../components/Text';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 

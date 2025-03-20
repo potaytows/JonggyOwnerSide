@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import axios from 'axios';
+import Text from '../components/Text';
 import io from 'socket.io-client';
 import MapViewDirections from 'react-native-maps-directions';
 import { CommonActions } from '@react-navigation/native';

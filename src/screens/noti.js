@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect } from 'react';
 import { showMessage } from 'react-native-flash-message';
 import io from 'socket.io-client';
 import { useNavigationState } from '@react-navigation/native';
+import Text from '../components/Text';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 const socket = io(apiheader);

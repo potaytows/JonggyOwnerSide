@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useFocusEffect, CommonActions } from '@react-navigation/native';
 import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import moment from 'moment';
 
+import Text from '../components/Text';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 

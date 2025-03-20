@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, SafeAreaView, StyleSheet, StatusBar, FlatList, ScrollView, TextInput, ActivityIndicator, TouchableOpacity, Image, Button, Alert } from 'react-native';
+import {  View, SafeAreaView, StyleSheet, StatusBar, FlatList, ScrollView, TextInput, ActivityIndicator, TouchableOpacity, Image, Button, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { CommonActions } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
-
+import Text from '../components/Text';
+import moment from 'moment';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
-
+import 'moment/locale/th';
+moment.locale('th');
 const AllReservations = ({ navigation, route }) => {
     const [isLoading, setLoading] = useState(false);
     const [reservationList, setReservationList] = useState([]);
@@ -66,21 +68,17 @@ const AllReservations = ({ navigation, route }) => {
                         </View>
                     )}
                     {reservationList && reservationList.length > 0 ? reservationList.map((item, index) => (
-
-
                         <View key={index}>
                             <View style={[styles.reserveCon,
                             item.status === "ยืนยันแล้ว" && { borderLeftColor: 'green' },
-                            item.status === "ยกเลิกการจองแล้ว" && { borderLeftColor: 'gray' }]}>
+                            item.status === "ยกเลิกการจองแล้ว" && { borderLeftColor: 'gray' },
+                            item.status === "เสร็จสิ้นแล้ว" && { borderLeftColor: 'gray' }]}>
                                 <View style={styles.ReservationList}>
                                     <View style={styles.FlexReserve}>
                                         <Text style={styles.title3}>การจองที่ {index + 1}</Text>
-                                        <Text style={styles.title4}>{item.createdAt}</Text>
+                                        <Text style={styles.title4}>{moment(item.createdAt).utc().format('Do MMMM HH:mm')}</Text>
                                     </View>
-
-
                                     <Text style={styles.title5}>โต๊ะ {item.reservedTables.map(table => table.text).join(', ')}</Text>
-
                                     <View style={styles.flexstatus}>
                                         <Text style={[styles.statusres,
                                         item.status === "ยืนยันแล้ว" && { color: 'green' },
