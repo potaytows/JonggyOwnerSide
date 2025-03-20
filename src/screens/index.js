@@ -174,7 +174,7 @@ const Index = ({ navigation }) => {
                             <View style={styles.itemIcon}>
                             <Ionicons name="wallet" size={90} color="black" />
 
-                            </View>x``
+                            </View>
 
                         </View>
                         <Text style={styles.itemTitle}>กระเป๋าเงิน</Text>

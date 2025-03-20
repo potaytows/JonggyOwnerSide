@@ -1,4 +1,4 @@
-import { StyleSheet, View, Button, Modal, TextInput, TouchableOpacity, Alert, ToastAndroid, Pressable, ScrollView, ActivityIndicator,Image} from 'react-native';
+import { StyleSheet, View, Button, Modal, TextInput, TouchableOpacity, Alert, ToastAndroid, Pressable, ScrollView, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import React, { useEffect, useState } from 'react';
 import axios, { Axios } from 'axios';
@@ -13,16 +13,25 @@ import { isLoaded } from 'expo-font';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
-// import { Image } from 'expo-image';
+import moment from 'moment-timezone';
+
 
 const EditRestaurantScreen = ({ route, navigation }) => {
     const [loading, setLoading] = useState(false);
+    const [openTime, setOpenTime] = useState(0);
+    const [restaurantImage, setRestaurantImage] = useState(null);
+    const [closeTime, setCloseTime] = useState(0);
     const [restaurant, setRestaurant] = useState({});
-    const [isEdittingtName, setEditName] = useState(false);
+    const [isEdittingName, setEditName] = useState(false);
+    const [isEdittingDescription, setEditDescription] = useState(false);
     const [isUploaded, setIsUploaded] = useState(false);
     const [NewRestaurantName, setNewRestaurantName] = useState("");
+    const [newDescription, setNewDescription] = useState("");
+    const [newopen, setNewOpen] = useState(0);
+    const [newClose, setNewClose] = useState(0);
     const [text, setText] = useState("");
-
+    const [description, setDescription] = useState("");
+    const hours = Array.from({ length: 25 }, (_, i) => i);
     const [image, setImage] = useState(null);
     const pickImage = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -37,7 +46,6 @@ const EditRestaurantScreen = ({ route, navigation }) => {
             quality: 0.5,
         });
         if (!result.canceled) {
-            console.log(isUploaded || NewRestaurantName != restaurant.restaurantName);
             setIsUploaded(true);
             setImage({ uri: result.assets[0].uri, type: 'image/png', name: 'uploadingimg' + Date.now() });
         }
@@ -51,13 +59,19 @@ const EditRestaurantScreen = ({ route, navigation }) => {
             setRestaurant(result);
             setNewRestaurantName(result.restaurantName);
             setText(result.restaurantName);
-
+            setDescription(result.description)
+            setNewDescription(result.description)
+            const openHour = await result.activeTime.open
+            const closeHour = await result.activeTime.close
+            setOpenTime(parseInt(openHour));
+            setCloseTime(parseInt(closeHour));
+            setNewOpen(parseInt(openHour));
+            setNewClose(parseInt(closeHour));
         } catch (error) {
             console.error(error);
         }
     };
     const fetchEditRestaurant = async () => {
-        console.log(NewRestaurantName != restaurant.restaurantName);
         if (isUploaded) {
             try {
                 const uploadResult = await FileSystem.uploadAsync(apiheader + '/restaurants/uploadImage/' + restaurant._id, image.uri, {
@@ -65,30 +79,69 @@ const EditRestaurantScreen = ({ route, navigation }) => {
                     uploadType: FileSystem.FileSystemUploadType.MULTIPART,
                     fieldName: 'image'
                 });
-                console.log(uploadResult)
             } catch (error) {
                 console.error(error);
             }
-        }if(NewRestaurantName != restaurant.restaurantName){
+        } else if (NewRestaurantName != restaurant.restaurantName) {
             try {
-                const res = await axios.post(apiheader + '/restaurants/editDetails/' + restaurant._id,{restaurantName:NewRestaurantName});
-                console.log(res)
+                const res = await axios.post(apiheader + '/restaurants/editDetails/' + restaurant._id, { restaurantName: NewRestaurantName });
+            } catch (error) {
+                console.error(error);
+            }
+        } else if (newDescription != restaurant.description) {
+            try {
+                const res = await axios.post(apiheader + '/restaurants/editDetails/' + restaurant._id, { description: newDescription });
+            } catch (error) {
+                console.error(error);
+            }
+        }else if (newopen != restaurant.activeTime.open) {
+            try {
+                const res = await axios.post(apiheader + '/restaurants/editDetails/' + restaurant._id, {"activeTime.open": newopen });
+            } catch (error) {
+                console.error(error);
+            }
+        }else if (newClose != restaurant.activeTime.close) {
+            try {
+                const res = await axios.post(apiheader + '/restaurants/editDetails/' + restaurant._id, { "activeTime.close": newClose });
             } catch (error) {
                 console.error(error);
             }
         }
-
+        getRestaurantbyUsername();
     };
     useEffect(() => {
         getRestaurantbyUsername();
     }, []);
-
+    useEffect(() => {
+        if (restaurant._id) {
+            setRestaurantImage(`${apiheader}/image/getRestaurantIcon/${restaurant._id}?${Math.random()}`);
+        }
+    }, [restaurant._id]);
     useFocusEffect(
         React.useCallback(() => {
             getRestaurantbyUsername();
         }, [])
     );
 
+    const handleSubmit = async () => {
+
+        try {
+            const response = await axios.post(`${apiheader}/tables/checkconflictedreservedTables`, {
+                restaurant_id: route.params.restaurantId,
+                reservedTables: route.params.selectedTables,
+                startTime: fullStartTime,
+                endTime: fullEndTime,
+            });
+
+            if (response.status === 200) {
+
+            }
+        } catch (error) {
+            Alert.alert(
+                error.response?.status === 409 ? "กรุณาเลือกเวลาอื่น มีเวลาที่ซ้ำกัน." : "เกิดข้อผิดพลาด กรุณาลองใหม่"
+            );
+        }
+    };
     return (
         <View style={{ flex: 1 }}>
             <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
@@ -102,7 +155,7 @@ const EditRestaurantScreen = ({ route, navigation }) => {
                 <Text style={styles.headerTitle}>
                     แก้ไขข้อมูลร้าน
                 </Text>
-                {isUploaded || NewRestaurantName != restaurant.restaurantName ? (
+                {isUploaded || NewRestaurantName != restaurant.restaurantName || newDescription != restaurant.description || newClose != closeTime || newopen != openTime ? (
                     <TouchableOpacity style={{ flex: 1, flexDirection: 'row-reverse' }}
                         onPress={() => Alert.alert('ยืนยันการแก้ไขข้อมูล', 'คุณต้องการแก้ใขข้อมูลหรือไม่ ', [
                             {
@@ -125,10 +178,10 @@ const EditRestaurantScreen = ({ route, navigation }) => {
             ) : (
                 <View style={styles.container}>
                     <View style={styles.ImageContainer}>
-                        {image ? (<Image source={{uri:image.uri}} width={100} height={100} style={styles.restaurantimage} />) : (
+                        {image ? (<Image source={{ uri: image.uri }} width={100} height={100} style={styles.restaurantimage} />) : (
                             <View>
-                                {restaurant._id !=undefined &&
-                                    <Image source={{uri:apiheader + '/image/getRestaurantIcon/' + restaurant._id+"?"+Math.round(Math.random()*1000000000).toString()}} width={100} height={100} key={new Date} style={styles.restaurantimage} />
+                                {restaurant._id != undefined &&
+                                    <Image source={{ uri:restaurantImage}} width={100} height={100} key={new Date} style={styles.restaurantimage} />
                                 }
                             </View>
 
@@ -142,17 +195,17 @@ const EditRestaurantScreen = ({ route, navigation }) => {
                     <View style={styles.restaurantNameContainer}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Text style={{ fontSize: 20 }}>ชื่อร้าน</Text>
-                            {!isEdittingtName &&
+                            {!isEdittingName &&
                                 <MaterialIcons name="edit" size={20} color="#EC7A45" style={{ marginLeft: 5 }} onPress={() => { setEditName(true) }} />
 
 
                             }
-                            {isEdittingtName &&
-                                <MaterialIcons name="save" size={20} color="#EC7A45" style={{ marginLeft: 5 }} onPress={() => { setNewRestaurantName(text);setEditName(false) }} />
+                            {isEdittingName &&
+                                <MaterialIcons name="save" size={20} color="#EC7A45" style={{ marginLeft: 5 }} onPress={() => { setNewRestaurantName(text); setEditName(false) }} />
 
                             }
                         </View>
-                        {isEdittingtName ? (
+                        {isEdittingName ? (
                             <TextInput
                                 onChangeText={setText}
                                 value={text}
@@ -165,9 +218,53 @@ const EditRestaurantScreen = ({ route, navigation }) => {
 
                         )}
                     </View>
+                    <View style={styles.restaurantNameContainer}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 20 }}>คำอธิบายร้าน</Text>
+                            {!isEdittingDescription &&
+                                <MaterialIcons name="edit" size={20} color="#EC7A45" style={{ marginLeft: 5 }} onPress={() => { setEditDescription(true) }} />
 
+
+                            }
+                            {isEdittingDescription &&
+                                <MaterialIcons name="save" size={20} color="#EC7A45" style={{ marginLeft: 5 }} onPress={() => { setNewDescription(description); setEditDescription(false) }} />
+
+                            }
+                        </View>
+                        {isEdittingDescription ? (
+                            <TextInput
+                                onChangeText={setDescription}
+                                value={description}
+                                placeholder="คำอธิบาย"
+                                style={{ fontSize: 15 }}
+                                autoFocus={true}
+                            />
+                        ) : (
+                            <Text style={{ fontSize: 15, marginTop: 9, marginLeft: 5 }}>{newDescription}</Text>
+
+                        )}
+                    </View>
+                    <View>
+
+                    </View>
+                    <View style={{ padding: 20 }}>
+                        <Text>เวลาเปิด:</Text>
+                        <Picker selectedValue={newopen} onValueChange={(itemValue) => setNewOpen(itemValue)}>
+                            {hours.map((hour) => (
+                                <Picker.Item key={hour} label={`${hour}:00`} value={hour} />
+                            ))}
+                        </Picker>
+
+                        <Text>เวลาปิด:</Text>
+                        <Picker selectedValue={newClose} onValueChange={(itemValue) => setNewClose(itemValue)}>
+                            {hours.map((hour) => (
+                                <Picker.Item key={hour} label={`${hour}:00`} value={hour} />
+                            ))}
+                        </Picker>
+                    </View>
                 </View>
             )}
+
         </View>
     );
 
