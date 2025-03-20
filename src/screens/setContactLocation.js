@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -10,6 +10,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 const googlemap = 'AIzaSyC_fdB6VOZvieVkKPSHdIFhIlVuhhXynyw';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
+import Text from '../components/Text';
 
 const SetContactLocationScreen = ({ navigation, route }) => {
     const [phoneNumber, setPhoneNumber] = useState('');

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {  View, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { CommonActions } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
+import Text from '../components/Text';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 

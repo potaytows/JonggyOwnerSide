@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, SafeAreaView, StyleSheet, StatusBar, FlatList, TextInput, ActivityIndicator, ToastAndroid, TouchableOpacity, Image, Button, Alert } from 'react-native'
+import {  View, SafeAreaView, StyleSheet, StatusBar, FlatList, TextInput, ActivityIndicator, ToastAndroid, TouchableOpacity, Image, Button, Alert } from 'react-native'
 import * as SecureStore from 'expo-secure-store';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
@@ -8,6 +8,7 @@ const apiheader = process.env.EXPO_PUBLIC_apiURI;
 import { CommonActions } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
+import Text from '../components/Text';
 
 const AddMenu = ({ navigation, route }) => {
     const [isLoading, setLoading] = useState(false);
