@@ -94,13 +94,13 @@ const EditRestaurantScreen = ({ route, navigation }) => {
             } catch (error) {
                 console.error(error);
             }
-        }else if (newopen != restaurant.activeTime.open) {
+        } else if (newopen != restaurant.activeTime.open) {
             try {
-                const res = await axios.post(apiheader + '/restaurants/editDetails/' + restaurant._id, {"activeTime.open": newopen });
+                const res = await axios.post(apiheader + '/restaurants/editDetails/' + restaurant._id, { "activeTime.open": newopen });
             } catch (error) {
                 console.error(error);
             }
-        }else if (newClose != restaurant.activeTime.close) {
+        } else if (newClose != restaurant.activeTime.close) {
             try {
                 const res = await axios.post(apiheader + '/restaurants/editDetails/' + restaurant._id, { "activeTime.close": newClose });
             } catch (error) {
@@ -142,6 +142,7 @@ const EditRestaurantScreen = ({ route, navigation }) => {
             );
         }
     };
+    const availableCloseTimes = newopen !== null ? hours.filter(hour => hour > newopen) : hours;
     return (
         <View style={{ flex: 1 }}>
             <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
@@ -181,7 +182,7 @@ const EditRestaurantScreen = ({ route, navigation }) => {
                         {image ? (<Image source={{ uri: image.uri }} width={100} height={100} style={styles.restaurantimage} />) : (
                             <View>
                                 {restaurant._id != undefined &&
-                                    <Image source={{ uri:restaurantImage}} width={100} height={100} key={new Date} style={styles.restaurantimage} />
+                                    <Image source={{ uri: restaurantImage }} width={100} height={100} key={new Date} style={styles.restaurantimage} />
                                 }
                             </View>
 
@@ -257,7 +258,7 @@ const EditRestaurantScreen = ({ route, navigation }) => {
 
                         <Text>เวลาปิด:</Text>
                         <Picker selectedValue={newClose} onValueChange={(itemValue) => setNewClose(itemValue)}>
-                            {hours.map((hour) => (
+                            {availableCloseTimes.map((hour) => (
                                 <Picker.Item key={hour} label={`${hour}:00`} value={hour} />
                             ))}
                         </Picker>
