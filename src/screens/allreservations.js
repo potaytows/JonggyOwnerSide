@@ -41,7 +41,13 @@ const AllReservations = ({ navigation, route }) => {
                 reservation: reservation,
                 restaurant_id: route.params.restaurant_id
             });
-        } else {
+        }
+        else if (reservation.status === "เสร็จสิ้นแล้ว") {
+            navigation.navigate('location', {
+                reservation: reservation,
+                restaurant_id: route.params.restaurant_id
+            });
+        }else {
             navigation.navigate('orderList', { reservation: reservation });
         }
     };
@@ -70,9 +76,8 @@ const AllReservations = ({ navigation, route }) => {
                     {reservationList && reservationList.length > 0 ? reservationList.map((item, index) => (
                         <View key={index}>
                             <View style={[styles.reserveCon,
-                            item.status === "ยืนยันแล้ว" && { borderLeftColor: 'green' },
-                            item.status === "ยกเลิกการจองแล้ว" && { borderLeftColor: 'gray' },
-                            item.status === "เสร็จสิ้นแล้ว" && { borderLeftColor: 'gray' }]}>
+                            item.status === "ยืนยันแล้ว" || item.status === "เสร้จสิ้นแล้ว" &&{ borderLeftColor: 'green' },
+                            item.status === "ยกเลิกการจองแล้ว" && { borderLeftColor: 'gray' }]}>
                                 <View style={styles.ReservationList}>
                                     <View style={styles.FlexReserve}>
                                         <Text style={styles.title3}>การจองที่ {index + 1}</Text>
@@ -81,7 +86,7 @@ const AllReservations = ({ navigation, route }) => {
                                     <Text style={styles.title5}>โต๊ะ {item.reservedTables.map(table => table.text).join(', ')}</Text>
                                     <View style={styles.flexstatus}>
                                         <Text style={[styles.statusres,
-                                        item.status === "ยืนยันแล้ว" && { color: 'green' },
+                                        item.status === "ยืนยันแล้ว" || item.status === "เสร้จสิ้นแล้ว" &&{ color: 'green' },
                                         item.status === "ยกเลิกการจองแล้ว" && { color: 'red' }]}>{item.status}</Text>
                                         <View style={styles.Xbutton}>
                                             <TouchableOpacity
