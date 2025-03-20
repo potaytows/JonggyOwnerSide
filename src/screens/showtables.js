@@ -144,7 +144,7 @@ const ShowTables = ({ route, navigation }) => {
             </LinearGradient>
             {loading ? (
                 <View style={styles.centeredView}>
-                    <ActivityIndicator size="large" color="#0000ff" />;
+                    <ActivityIndicator size="large" color="#0000ff" />
                 </View>
 
             ) : (
@@ -217,7 +217,7 @@ const ShowTables = ({ route, navigation }) => {
 
                                                 >
                                                     {presets.map((item, index) => (
-                                                        <Picker.Item label={item.presetName} value={item._id} />
+                                                        <Picker.Item label={item.presetName} value={item._id} key={item._id} />
 
                                                     ))}
                                                 </Picker>
