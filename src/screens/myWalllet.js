@@ -10,12 +10,25 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 import moment from 'moment-timezone';
 import Text from '../components/Text';
+import { LineChart } from 'react-native-chart-kit';
+import { Dimensions } from 'react-native';
+
 
 const MyWalletScreen = ({ navigation, route }) => {
     const [isLoading, setLoading] = useState(false);
     const [reservationList, setReservationList] = useState([]);
     const [wallets, setWallet] = useState(null);
     const [selectedTab, setSelectedTab] = useState('reservations');
+    const [summary, setSummary] = useState({
+        dailyIncome: 0,
+        dailyExpense: 0,
+        monthlyIncome: 0,
+        monthlyExpense: 0,
+    });
+    const [otherIncome, setOtherIncome] = useState('');
+    const [cost, setCost] = useState('');
+    const [viewMode, setViewMode] = useState('daily'); // 'daily' หรือ 'monthly'
+
     const loadReservations = async () => {
         setLoading(true);
 
@@ -36,6 +49,8 @@ const MyWalletScreen = ({ navigation, route }) => {
             const responses = await axios.get(apiheader + '/wallet/getwallet/' + route.params.restaurant_id);
             const results = await responses.data;
             setWallet(results);
+            const summary = calculateSummary(results.wallet.transactions, results.wallet.withdrawals);
+            setSummary(summary);
         } catch (error) {
             console.error(error);
         } finally {
@@ -63,6 +78,101 @@ const MyWalletScreen = ({ navigation, route }) => {
     const handleButtonBank = () => {
         navigation.navigate('bankAccount', { restaurant_id: route.params.restaurant_id, wallets: wallets })
     };
+    const calculateSummary = (transactions, withdrawals) => {
+        const today = moment().startOf('day');
+        const startOfMonth = moment().startOf('month');
+
+        let dailyIncome = 0;
+        let dailyExpense = 0;
+        let monthlyIncome = 0;
+        let monthlyExpense = 0;
+
+        // คำนวณรายรับและรายจ่ายในวันนี้
+        transactions.forEach(transaction => {
+            if (moment(transaction.date).isSame(today, 'day')) {
+                dailyIncome += transaction.amount;
+                monthlyIncome += transaction.amount;
+            }
+            if (moment(transaction.date).isSameOrAfter(startOfMonth, 'month')) {
+                monthlyIncome += transaction.amount;
+            }
+        });
+
+        withdrawals.forEach(withdrawal => {
+            if (moment(withdrawal.date).isSame(today, 'day')) {
+                dailyExpense += withdrawal.amount;
+                monthlyExpense += withdrawal.amount;
+            }
+            if (moment(withdrawal.date).isSameOrAfter(startOfMonth, 'month')) {
+                monthlyExpense += withdrawal.amount;
+            }
+        });
+
+        return {
+            dailyIncome,
+            dailyExpense,
+            monthlyIncome,
+            monthlyExpense,
+        };
+    };
+    const addTotalSummary = async (restaurantId, totalsummary) => {
+        Alert.alert(
+            "ต้องการบันทึกยอดขายหรือไม่",
+            "ยอดขายของคุณจะถูกบันทึกเพื่อนำไปคำนวนยอดขายรายเดิน",
+            [
+                {
+                    text: "ยกเลิก",
+                    style: "cancel"
+                },
+                {
+                    text: "ยืนยัน",
+                    onPress: async () => {
+                        try {
+                            const response = await axios.post(apiheader + '/wallet/add-totalsummary/' + route.params.restaurant_id, { totalsummary: Totalsummary });
+                            console.log(Totalsummary)
+                            Alert.alert("บันทึกข้อมูลเรียบร้อย");
+                            const data = await response.json();
+                            if (response.status === 200) {
+                                console.log('Successfully added Totalsummary:', data);
+                            } else {
+                                console.log('Error:', data.message);
+                            }
+                        } catch (error) {
+                        } console.error('Error adding Totalsummary:', error);
+                    }
+
+                }
+            ]
+        );
+    };
+
+    const screenWidth = Dimensions.get("window").width;
+
+    // ข้อมูลที่จะแสดงในกราฟ (รายวันและรายเดือน)
+    const dailyData = {
+        labels: ["รายรับ", "รายจ่าย"],
+        datasets: [
+            {
+                data: [summary.dailyIncome, summary.dailyExpense],
+                strokeWidth: 2,
+                color: (opacity = 1) => `rgba(0, 204, 255, ${opacity})`, // สีของเส้นกราฟ
+            },
+        ],
+    };
+
+    const monthlyData = {
+        labels: ["รายรับ", "รายจ่าย"],
+        datasets: [
+            {
+                data: [summary.monthlyIncome, summary.monthlyExpense],
+                strokeWidth: 2,
+                color: (opacity = 1) => `rgba(255, 99, 132, ${opacity})`, // สีของเส้นกราฟ
+            },
+        ],
+    };
+
+
+    const Totalsummary = summary.dailyIncome - summary.dailyExpense + parseFloat(otherIncome || 0) - parseFloat(cost || 0);
     return (
         <SafeAreaView style={styles.container}>
             <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
@@ -81,8 +191,9 @@ const MyWalletScreen = ({ navigation, route }) => {
                 <View style={styles.summaryContainer}>
                     <Text style={styles.totalPriceTextheader}>ยอดที่สามารถถอนได้</Text>
                     <Text style={styles.totalPriceText}>
-                        ฿{wallets && wallets.wallet && wallets.wallet.balance !== undefined ? wallets.wallet.balance : '0'}
+                        ฿{wallets && wallets.wallet && wallets.wallet.balance !== undefined ? wallets.wallet.balance.toFixed(2) : '0.00'}
                     </Text>
+
                 </View>
                 <TouchableOpacity onPress={handleButtonBank}>
                     <View style={styles.flexbank}>
@@ -97,6 +208,110 @@ const MyWalletScreen = ({ navigation, route }) => {
                     </View>
                 </TouchableOpacity>
 
+                <ScrollView>
+                    <View style={styles.summaryContainer}>
+                        <View style={styles.buttonContainer}>
+                            <Button
+                                title="รายวัน"
+                                onPress={() => setViewMode('daily')}
+                                color={viewMode === 'daily' ? '#00CCFF' : '#DDDDDD'}
+                            />
+                            <Button
+                                title="รายเดือน"
+                                onPress={() => setViewMode('monthly')}
+                                color={viewMode === 'monthly' ? '#FF6384' : '#DDDDDD'}
+                            />
+                        </View>
+                        {viewMode === 'daily' && (
+
+                            <View style={styles.daySummary}>
+                                <Text style={styles.summaryTextheader}>ยอดรายรับรายจ่ายประจำวัน</Text>
+                                <View style={styles.daySummaryTitle}>
+                                    <Text style={styles.summaryPriceText}>รายรับ ฿{summary.dailyIncome}</Text>
+                                    <Text style={styles.ExpenseSummaryPriceText}>รายจ่าย ฿{summary.dailyExpense}</Text>
+                                </View>
+                                <Text style={styles.useTosummarry}>คำนวนยอดขายต่อวัน</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="รายได้จากภายนอก"
+                                    keyboardType="numeric"
+                                    value={otherIncome}
+                                    onChangeText={(text) => setOtherIncome(text)}
+                                />
+
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="ต้นทุน"
+                                    keyboardType="numeric"
+                                    value={cost}
+                                    onChangeText={(text) => setCost(text)}
+                                />
+
+                                <Text style={styles.summaryPriceAll}>ผลกำไรวันนี้</Text>
+                                <Text style={styles.Totalsummary}>฿{Totalsummary}</Text>
+                                {/* ปุ่มเลือกแสดงระหว่าง รายวันและรายเดือน */}
+
+
+                                <LineChart
+                                    data={dailyData}
+                                    width={screenWidth - 30}
+                                    height={220}
+                                    chartConfig={{
+                                        backgroundColor: "#fff",
+                                        backgroundGradientFrom: "#fff",
+                                        backgroundGradientTo: "#fff",
+                                        decimalPlaces: 2,
+                                        color: (opacity = 1) => `rgba(0, 204, 255, ${opacity})`,
+                                        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                                        style: {
+                                            borderRadius: 16,
+                                        },
+                                    }}
+                                    style={{
+                                        marginVertical: 8,
+                                        borderRadius: 16,
+                                    }}
+                                />
+
+                            </View>
+                        )}
+
+                        {viewMode === 'monthly' && (
+                            <View style={styles.monthSummary}>
+                                <Text style={styles.summaryTextheader}>ยอดรายรับรายจ่ายประจำเดือน</Text>
+                                <View style={styles.daySummaryTitle}>
+                                    <Text style={styles.summaryPriceText}>รายรับ ฿{summary.monthlyIncome}</Text>
+                                    <Text style={styles.ExpenseSummaryPriceText}>รายจ่าย ฿{summary.monthlyExpense}</Text>
+                                </View>
+
+                                <LineChart
+                                    data={monthlyData}
+                                    width={screenWidth - 30}
+                                    height={220}
+                                    chartConfig={{
+                                        backgroundColor: "#fff",
+                                        backgroundGradientFrom: "#fff",
+                                        backgroundGradientTo: "#fff",
+                                        decimalPlaces: 2,
+                                        color: (opacity = 1) => `rgba(255, 99, 132, ${opacity})`,
+                                        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                                        style: {
+                                            borderRadius: 16,
+                                        },
+                                    }}
+                                    style={{
+                                        marginVertical: 8,
+                                        borderRadius: 16,
+                                    }}
+                                />
+                            </View>
+                        )}
+                        <TouchableOpacity style={styles.button} onPress={addTotalSummary}>
+                            <Text style={styles.buttonText}>บันทึกผล</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                </ScrollView>
 
                 <View style={styles.historyContainer}>
                     <View style={styles.historys}>
@@ -110,37 +325,37 @@ const MyWalletScreen = ({ navigation, route }) => {
                         </TouchableOpacity>
                     </View>
                     {selectedTab === 'reservations' ? (
-                        reservationList.filter(item => item.status === "ยืนยันแล้ว" || item.status === "เสร็จสิ้นแล้ว").length > 0 ? 
-                        reservationList
-                            .filter(item => item.status === "ยืนยันแล้ว" || item.status === "เสร็จสิ้นแล้ว")
-                            .map((item, index) => (
-                                <TouchableOpacity key={index} onPress={() => handleButtonPress(item)}>
-                                    <View style={[styles.reserveCon, { borderLeftColor: 'green' }]}>
-                                        <View style={styles.ReservationList}>
-                                            <View style={styles.FlexReserve}>
-                                                <Text style={styles.title3}>การจองที่ {index + 1}</Text>
-                                                <Text style={styles.title4}>
-                                                    {moment(item.createdAt).tz('Asia/Bangkok').format('LLL')}
-                                                </Text>
-                                            </View>
-                                            <View style={styles.flexstatus}>
-                                            <Text style={[styles.statusres,
-                                            item.payment || item.Payment[0]?.status === 'success' ? { color: 'green' } : { color: 'blue' },
-                                            ]}>
-                                                {(item.Payment[0]?.status === 'failed')
-                                                    ? "รอการชำระเงิน"
-                                                    : item.Payment && item.Payment[0]?.status === 'success'
-                                                        ? "ชำระเงินแล้ว"
-                                                        : item.status}
-                                            </Text>
-                                                <View style={styles.Xbutton}>
-                                                    <Text style={styles.totalPricePerReservation}>{item.total}฿</Text>
+                        reservationList.filter(item => item.status === "ยืนยันแล้ว" || item.status === "เสร็จสิ้นแล้ว").length > 0 ?
+                            reservationList
+                                .filter(item => item.status === "ยืนยันแล้ว" || item.status === "เสร็จสิ้นแล้ว")
+                                .map((item, index) => (
+                                    <TouchableOpacity key={index} onPress={() => handleButtonPress(item)}>
+                                        <View style={[styles.reserveCon, { borderLeftColor: 'green' }]}>
+                                            <View style={styles.ReservationList}>
+                                                <View style={styles.FlexReserve}>
+                                                    <Text style={styles.title3}>การจองที่ {index + 1}</Text>
+                                                    <Text style={styles.title4}>
+                                                        {moment(item.createdAt).tz('Asia/Bangkok').format('LLL')}
+                                                    </Text>
+                                                </View>
+                                                <View style={styles.flexstatus}>
+                                                    <Text style={[styles.statusres,
+                                                    item.payment || item.Payment[0]?.status === 'success' ? { color: 'green' } : { color: 'blue' },
+                                                    ]}>
+                                                        {(item.Payment[0]?.status === 'failed')
+                                                            ? "รอการชำระเงิน"
+                                                            : item.Payment && item.Payment[0]?.status === 'success'
+                                                                ? "ชำระเงินแล้ว"
+                                                                : item.status}
+                                                    </Text>
+                                                    <View style={styles.Xbutton}>
+                                                        <Text style={styles.totalPricePerReservation}>{item.total}฿</Text>
+                                                    </View>
                                                 </View>
                                             </View>
                                         </View>
-                                    </View>
-                                </TouchableOpacity>
-                            )) : <Text>ไม่มีข้อมูลการจอง</Text>
+                                    </TouchableOpacity>
+                                )) : <Text>ไม่มีข้อมูลการจอง</Text>
                     ) : (
                         wallets?.wallet?.withdrawals?.length > 0 ? wallets.wallet.withdrawals.map((withdrawal, index) => (
                             <View key={index} style={styles.transactionCard}>
@@ -148,7 +363,7 @@ const MyWalletScreen = ({ navigation, route }) => {
                                     <Text>{moment(withdrawal.date).tz('Asia/Bangkok').format('LLL')}</Text>
                                     <Text style={styles.withdrawalamount}>-฿{withdrawal.amount}</Text>
                                 </View>
-                                <Text style={{ color: withdrawal.status === 'approved' ? 'green' : 'gray' ,marginTop:10}}>
+                                <Text style={{ color: withdrawal.status === 'approved' ? 'green' : 'gray', marginTop: 10 }}>
                                     {withdrawal.status}
                                 </Text>
                             </View>
@@ -276,8 +491,8 @@ const styles = StyleSheet.create({
     totalPricePerReservation: {
         marginLeft: 'auto',
         marginTop: 10,
-        fontSize:16,
-        color:'green'
+        fontSize: 16,
+        color: 'green'
     },
     flexbank: {
         flexDirection: 'row',
@@ -317,23 +532,65 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: 'white',
     },
-    flexWithdraw:{
-        flexDirection:'row'
+    flexWithdraw: {
+        flexDirection: 'row'
     },
-    withdrawalamount:{
-        marginLeft:'auto',
-        color:'red',
-        fontSize:16
+    withdrawalamount: {
+        marginLeft: 'auto',
+        color: 'red',
+        fontSize: 16
     },
     activeTab: {
         borderBottomWidth: 2,
         borderBottomColor: 'orange',
     },
-    btuhistory:{
-        marginLeft:10
-    }
-    
+    btuhistory: {
+        marginLeft: 10
+    },
+    daySummaryTitle: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: 15
 
+    },
+    summaryPriceText: {
+        marginLeft: 10,
+        marginRight: 10,
+        fontSize: 16,
+        textAlign: 'center',
+        color: 'green'
+    },
+    ExpenseSummaryPriceText: {
+        marginLeft: 10,
+        marginRight: 10,
+        fontSize: 16,
+        textAlign: 'center',
+        color: 'red'
+    },
+    summaryTextheader: {
+        marginTop: 15,
+        fontSize: 16
+    },
+    input: {
+        borderBlockColor: 'gray',
+        borderWidth: 1,
+        marginTop: 5
+    },
+    useTosummarry: {
+        fontSize: 16,
+        marginTop: 10
+    },
+    summaryPriceAll: {
+        fontSize: 20,
+        textAlign: 'center',
+        marginTop: 10
+    },
+    Totalsummary: {
+        fontSize: 25,
+        color: '#FF914D',
+        textAlign: 'center'
+    }
 });
 
 export default MyWalletScreen;
