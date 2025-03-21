@@ -137,7 +137,7 @@ const Index = ({ navigation }) => {
 
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate("Menus", { restaurant_id: restaurant._id })} activeOpacity={1}>
+                <TouchableOpacity onPress={() => navigation.navigate("ListMenu", { restaurant_id: restaurant._id })} activeOpacity={1}>
                     <View >
 
                         <View style={styles.item}>
@@ -147,7 +147,7 @@ const Index = ({ navigation }) => {
                             </View>
 
                         </View>
-                        <Text style={styles.itemTitle}>เพิ่มเมนู</Text>
+                        <Text style={styles.itemTitle}>เมนูอาหาร</Text>
                     </View>
 
                 </TouchableOpacity>

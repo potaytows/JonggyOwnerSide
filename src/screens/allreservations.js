@@ -76,7 +76,7 @@ const AllReservations = ({ navigation, route }) => {
                     {reservationList && reservationList.length > 0 ? reservationList.map((item, index) => (
                         <View key={index}>
                             <View style={[styles.reserveCon,
-                            item.status === "ยืนยันแล้ว" || item.status === "เสร้จสิ้นแล้ว" &&{ borderLeftColor: 'green' },
+                            item.status === "ยืนยันแล้ว" || item.status === "เสร็จสิ้นแล้ว" &&{ borderLeftColor: 'green' },
                             item.status === "ยกเลิกการจองแล้ว" && { borderLeftColor: 'gray' }]}>
                                 <View style={styles.ReservationList}>
                                     <View style={styles.FlexReserve}>
@@ -86,7 +86,7 @@ const AllReservations = ({ navigation, route }) => {
                                     <Text style={styles.title5}>โต๊ะ {item.reservedTables.map(table => table.text).join(', ')}</Text>
                                     <View style={styles.flexstatus}>
                                         <Text style={[styles.statusres,
-                                        item.status === "ยืนยันแล้ว" || item.status === "เสร้จสิ้นแล้ว" &&{ color: 'green' },
+                                        item.status === "ยืนยันแล้ว" || item.status === "เสร็จสิ้นแล้ว" &&{ borderLeftColor: 'green' },
                                         item.status === "ยกเลิกการจองแล้ว" && { color: 'red' }]}>{item.status}</Text>
                                         <View style={styles.Xbutton}>
                                             <TouchableOpacity

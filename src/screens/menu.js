@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {View, SafeAreaView, StyleSheet, StatusBar, FlatList, Modal, ActivityIndicator, Alert, ToastAndroid, TouchableOpacity, Image, Button, TextInput } from 'react-native'
+import { View, SafeAreaView, StyleSheet, StatusBar, FlatList, Modal, ActivityIndicator, Alert, ToastAndroid, TouchableOpacity, Image, Button, TextInput } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import AutoHeightImage from 'react-native-auto-height-image'
 import { useFocusEffect } from '@react-navigation/native';
@@ -48,13 +48,16 @@ const Menu = ({ navigation, route }) => {
             const response = await axios.get(apiheader + '/menus/getMenu/' + route.params?.menuid);
             const result = await response.data;
             setMenu(result)
-            setImageUri(apiheader + "/image/getMenuIcon/" + result._id+"?"+Math.round(Math.random()*1000000000).toString())
+            setImageUri(apiheader + "/image/getMenuIcon/" + result._id + "?" + Math.round(Math.random() * 1000000000).toString())
             setMenuName(result.menuName.toString());
             setMenuPrice(result.price.toString());
+            getTotalSales(result._id);
+
         } catch (error) {
             console.error(error);
         } finally {
             setLoading(false);
+
         }
     };
     const getAddons = async () => {
@@ -98,6 +101,18 @@ const Menu = ({ navigation, route }) => {
             setLoading(false)
         }
     }
+    const getTotalSales = async (menu_id) => {
+        setLoading(true)
+        try {
+            const result = await axios.get(apiheader + '/menus/' +menu_id + "/order-counts");
+            const res = result.data
+            console.log(res)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const fetchDeleteMenu = async () => {
         setLoading(true)
@@ -122,7 +137,7 @@ const Menu = ({ navigation, route }) => {
             const res = result.data
             console.log(res)
             if (res.status == "edited") {
-                ToastAndroid.showWithGravityAndOffset('แก้ไขเสร็จสิ้น', ToastAndroid.SHORT, ToastAndroid.BOTTOM, 25, 50)
+                ToastAndroid.showWithGravityAndOffset('แก้ไขเสร็จสิ้น', ToastAndroid.SHORT, ToastAndroid.BOTTOM, 25, 50);
                 getMenu();
             }
         } catch (error) {
@@ -157,14 +172,14 @@ const Menu = ({ navigation, route }) => {
 
         <ScrollView style={{ flex: 1 }}>
             <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
-                    <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
-                        <MaterialIcons name="arrow-back-ios" size={24} color="white"
-                            onPress={() => navigation.dispatch(CommonActions.goBack())} />
-                    </View>
-                    <Text style={styles.headerTitle}>
-                        แก้ไขเมนูอาหาร
-                    </Text>
-                </LinearGradient>
+                <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
+                    <MaterialIcons name="arrow-back-ios" size={24} color="white"
+                        onPress={() => navigation.dispatch(CommonActions.goBack())} />
+                </View>
+                <Text style={styles.headerTitle}>
+                    แก้ไขเมนูอาหาร
+                </Text>
+            </LinearGradient>
             {isLoading && <View style={styles.activityIndicatorBody}>
                 <ActivityIndicator size="large" color='#ff8a24' animating={isLoading} />
             </View>}
@@ -182,36 +197,36 @@ const Menu = ({ navigation, route }) => {
                         }}>
                         <View style={styles.centeredView}>
                             <View style={styles.modalView}>
-                                <View  style={{ width:'100%'}}>
-                                <TextInput
-                                    placeholder='ชื่อ Addon'
-                                    placeholderTextColor='gray'
-                                    style={styles.inputs}
-                                    value={addonName}
-                                    onChangeText={text => setAddonName(text)}
-                                />
-                                <TextInput
-                                    placeholder='ราคา'
-                                    placeholderTextColor='gray'
-                                    style={styles.inputs}
-                                    value={addonPrice}
-                                    onChangeText={text => setAddonPrice(text)}
-                                />
+                                <View style={{ width: '100%' }}>
+                                    <TextInput
+                                        placeholder='ชื่อ Addon'
+                                        placeholderTextColor='gray'
+                                        style={styles.inputs}
+                                        value={addonName}
+                                        onChangeText={text => setAddonName(text)}
+                                    />
+                                    <TextInput
+                                        placeholder='ราคา'
+                                        placeholderTextColor='gray'
+                                        style={styles.inputs}
+                                        value={addonPrice}
+                                        onChangeText={text => setAddonPrice(text)}
+                                    />
                                 </View>
-                                <View  style={{flexDirection:'row', marginTop:20}}>
-                                <TouchableOpacity
-                                    style={[styles.button, styles.buttonAdd]} onPress={() => { fetchAddAddons(); setModalVisible(!modalVisible); setAddonName(""); setAddonPrice(""); getAddons(); }}>
-                                    <Text style={styles.textStyle}>เพิ่ม Addon</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[styles.button, styles.buttonClose]}
-                                    onPress={() => {
-                                        setModalVisible(!modalVisible);
-                                        setAddonName("");
-                                        setAddonPrice("");
-                                    }}>
-                                    <Text style={styles.textStyle}>ยกเลิก</Text>
-                                </TouchableOpacity>
+                                <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                                    <TouchableOpacity
+                                        style={[styles.button, styles.buttonAdd]} onPress={() => { fetchAddAddons(); setModalVisible(!modalVisible); setAddonName(""); setAddonPrice(""); getAddons(); }}>
+                                        <Text style={styles.textStyle}>เพิ่ม Addon</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.button, styles.buttonClose]}
+                                        onPress={() => {
+                                            setModalVisible(!modalVisible);
+                                            setAddonName("");
+                                            setAddonPrice("");
+                                        }}>
+                                        <Text style={styles.textStyle}>ยกเลิก</Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                         </View>
@@ -239,21 +254,17 @@ const Menu = ({ navigation, route }) => {
                             onChangeText={text => setMenuName(text)}
                         />
                     </View>
-                    <View>
-                        <View style={styles.layoutEditManuname}>
-                            <TextInput
-                                placeholder='ราคา'
-                                placeholderTextColor='gray'
-                                style={styles.input2}
-                                value={MenuPrice}
-                                onChangeText={text => setMenuPrice(text)}
-                            />
-                        </View>
-
+                    <View style={styles.layoutEditManu}>
+                        <Text>แก้ไขราคา</Text>
+                        <TextInput
+                            placeholder='ราคา'
+                            placeholderTextColor='gray'
+                            style={styles.input2}
+                            value={MenuPrice}
+                            onChangeText={text => setMenuPrice(text)}
+                        />
                     </View>
-                    <View>
 
-                    </View>
                 </View>
                 <View style={styles.addonContainer}>
                     <Text style={styles.addontitle}>Addons เพิ่มเติม</Text>
@@ -282,10 +293,10 @@ const Menu = ({ navigation, route }) => {
                     <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(!modalVisible)}>
                         <Text style={{ color: "white" }}>เพิ่ม Addon</Text>
                     </TouchableOpacity>
-                   
+
                 </View>
                 <View style={styles.ButtonContainer}>
-                <ConfirmButton />
+                    <ConfirmButton />
                     <TouchableOpacity style={styles.deleteButton} onPress={() => Alert.alert('คุณต้องการลบหรือไม่ ', 'คุณต้องการลบช้อมูลนี้หรือไม่ ', [
                         {
                             text: 'ยกเลิก',
@@ -295,6 +306,7 @@ const Menu = ({ navigation, route }) => {
                         <Text style={{ color: "white" }}>ลบ</Text>
                     </TouchableOpacity>
                 </View>
+                
             </SafeAreaView>
 
         </ScrollView>
@@ -326,11 +338,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignSelf: 'center',
 
-    }, 
-    ButtonContainer:{
-        flexDirection:'row',
+    },
+    ButtonContainer: {
+        flexDirection: 'row',
         marginLeft: 20,
-        marginRight:20,
+        marginRight: 20,
         padding: 20,
         borderRadius: 10,
         backgroundColor: 'white',
@@ -342,6 +354,10 @@ const styles = StyleSheet.create({
         shadowRadius: 2.62,
 
         elevation: 5,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom:20
     },
     addonContainer: {
         margin: 20,
@@ -391,10 +407,10 @@ const styles = StyleSheet.create({
         textAlign: 'center'
 
     },
-    inputs:{
-        marginTop:10,
-        padding:10,
-        borderRadius:10,
+    inputs: {
+        marginTop: 10,
+        padding: 10,
+        borderRadius: 10,
         backgroundColor: 'white',
         shadowOffset: {
             width: 0,
@@ -450,6 +466,7 @@ const styles = StyleSheet.create({
         shadowRadius: 2.62,
 
         elevation: 5,
+        marginBottom: 20
     },
     modalView: {
         margin: 20,
@@ -477,17 +494,17 @@ const styles = StyleSheet.create({
     },
     buttonClose: {
         backgroundColor: 'red',
-        padding:10,
-        paddingLeft:20,
-        paddingRight:20,
-        marginLeft:10
+        padding: 10,
+        paddingLeft: 20,
+        paddingRight: 20,
+        marginLeft: 10
     },
     buttonAdd: {
         backgroundColor: 'green',
-        padding:10,
-        paddingLeft:20,
-        paddingRight:20
-    
+        padding: 10,
+        paddingLeft: 20,
+        paddingRight: 20
+
 
     },
     textStyle: {
@@ -531,7 +548,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
-        marginLeft:10
+        marginLeft: 10
     }, header: {
         height: 109,
         borderBottomLeftRadius: 10,
