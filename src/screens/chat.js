@@ -1,24 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View,TextInput, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, TextInput, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import io from 'socket.io-client';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
-import { CommonActions } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialIcons } from '@expo/vector-icons';
+import { reduce } from 'lodash';
 import Text from '../components/Text';
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 
 const apiheader = process.env.EXPO_PUBLIC_apiURI;
 const socket = io(apiheader);
 
-const ChatScreen = ({ route,navigation}) => {
+const ChatScreen = ({ route, navigation }) => {
     const { reservationID } = route.params;
     const [newMessage, setNewMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [visibleTimestamps, setVisibleTimestamps] = useState({});
     const [restaurant, setRestaurant] = useState(null);
     const scrollViewRef = useRef();
+    const [selectedImage, setImageUri] = useState(null);
+
 
     useEffect(() => {
         const fetchChatMessages = async () => {
@@ -34,7 +36,21 @@ const ChatScreen = ({ route,navigation}) => {
         fetchChatMessages();
     }, [reservationID]);
 
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
 
+        if (!result.canceled) {
+            setImageUri(result.assets[0].uri);
+        }
+    };
+    const removeImage = () => {
+        setImageUri(null);
+    };
     useFocusEffect(
         React.useCallback(() => {
             const userType = "restaurant";
@@ -43,6 +59,7 @@ const ChatScreen = ({ route,navigation}) => {
             socket.on('message', (message) => {
                 setMessages(prevMessages => [...prevMessages, message]);
             });
+
 
             socket.on('updateMessages', (updatedMessages) => {
                 setMessages(updatedMessages);
@@ -57,9 +74,23 @@ const ChatScreen = ({ route,navigation}) => {
     );
 
     const sendMessage = async () => {
-        if (newMessage.trim()) {
-            socket.emit('chatMessage', { reservationID, sender: 'restaurant', message: newMessage });
+        if (newMessage.trim() || selectedImage) {
+            let messageType = '';
+            let messageContent = '';
+            if (selectedImage) {
+                messageType = 'image';
+                messageContent = selectedImage;
+            } else {
+                messageType = 'text';
+                messageContent = newMessage.trim();
+            }
+
+            console.log('Sending message:', messageContent);
+            socket.emit('chatMessage', { reservationID, sender: 'restaurant', message: messageContent, type: messageType });
+
             setNewMessage('');
+            setImageUri('');
+            console.log(messages);
             scrollViewRef.current?.scrollToEnd({ animated: true });
         }
     };
@@ -85,7 +116,7 @@ const ChatScreen = ({ route,navigation}) => {
             return acc;
         }, []);
 
-        
+        // Handle setting isFirst and isLast
         grouped.forEach(group => {
             if (group.messages.length > 1) {
                 group.messages.forEach((message, index) => {
@@ -93,12 +124,13 @@ const ChatScreen = ({ route,navigation}) => {
                     message.isLast = index === group.messages.length - 1;
                 });
             } else {
-           
+                // For groups with a single message, skip isFirst and isLast
                 group.messages[0].isFirst = false;
                 group.messages[0].isLast = false;
             }
         });
 
+        // Mark groups that contain only one message
         grouped.forEach(group => {
             group.isOneOfGroup = group.messages.length === 1;
         });
@@ -110,42 +142,38 @@ const ChatScreen = ({ route,navigation}) => {
     return (
         <View style={styles.container}>
             <ScrollView ref={scrollViewRef}>
-            <LinearGradient colors={['#FB992C', '#EC7A45']} start={{ x: 0.2, y: 0.8 }} style={styles.header}>
-                <View style={{ flexWrap: 'wrap', alignSelf: 'center', marginLeft: 20, marginTop: 35 }}>
-                    <MaterialIcons name="arrow-back-ios" size={24} color="white"
-                        onPress={() => navigation.dispatch(CommonActions.goBack())} />
-                </View>
-                <Text style={styles.headerTitle}>
-                </Text>
-            </LinearGradient>
                 {groupedMessages.length === 0 && <Text style={styles.loadingText}>No messages yet.</Text>}
                 {groupedMessages.map((group, groupIndex) => (
                     <View key={groupIndex}>
                         {group.messages.map((item, index) => (
-                            <View key={`${groupIndex}-${index}`} style={[styles.messageContainer, item.sender === 'customer' && { alignSelf: 'flex-start' }]}>
+                            <View key={`${groupIndex}-${index}`} style={[styles.messageContainer, item.sender === 'restaurant' && { alignSelf: 'flex-end' }]}>
                                 {item.sender === 'customer' && restaurant && (
                                     <View style={styles.flexChatCalling}>
                                         {item.isLast && (
                                             <View style={styles.image}>
-                                               
+                                                <Image style={styles.imagephoto} source={{ uri: `${apiheader}/image/getRestaurantIcon/${restaurant._id}` }} />
                                             </View>
                                         )}
                                         {group.isOneOfGroup && (
                                             <View style={styles.image}>
-                                                
+                                                <Image style={styles.imagephoto} source={{ uri: `${apiheader}/image/getRestaurantIcon/${restaurant._id}` }} />
                                             </View>
                                         )}
                                         {!item.isLast && !group.isOneOfGroup && (
                                             <View style={styles.space}></View>
                                         )}
-                                        {/* group.isOneOfGroup && */}
+
                                         <TouchableOpacity style={styles.chickTime} onPress={() => showTime(item._id)} >
-                                            <Text style={[styles.messageText,
-                                            item.sender === 'customer' && { backgroundColor: 'grey' },
-                                            item.isLast && { borderTopLeftRadius: 10 },
-                                            item.isFirst && { borderBottomLeftRadius: 10 },
-                                            !group.isOneOfGroup && !item.isFirst && !item.isLast && { borderBottomLeftRadius: 10, borderTopLeftRadius: 10 },
-                                            ]}>{item.message}</Text>
+                                            {item.type === 'image' ? (
+                                                <Image source={{ uri: item.message }} style={styles.messageImage} />
+                                            ) : (
+                                                <Text style={[styles.messageText,
+                                                item.sender === 'customer' && { backgroundColor: 'grey' },
+                                                item.isLast && { borderTopLeftRadius: 10 },
+                                                item.isFirst && { borderBottomLeftRadius: 10 },
+                                                !group.isOneOfGroup && !item.isFirst && !item.isLast && { borderBottomLeftRadius: 10, borderTopLeftRadius: 10 },
+                                                ]}>{item.message}</Text>
+                                            )}
                                         </TouchableOpacity>
                                     </View>
                                 )}
@@ -156,24 +184,50 @@ const ChatScreen = ({ route,navigation}) => {
                                             {item.readStatus === 'ReadIt' && (<Text style={styles.ReadText}>อ่านแล้ว</Text>)}
                                         </View>
                                         <TouchableOpacity style={styles.chickTime} onPress={() => showTime(item._id)}>
-                                            <Text style={[styles.messageText,
-                                            item.sender === 'customer' && { backgroundColor: 'grey' },
-                                            item.isLast && { borderTopRightRadius: 10 },
-                                            item.isFirst && { borderBottomRightRadius: 10 },
-                                            !group.isOneOfGroup && !item.isFirst && !item.isLast && { borderBottomRightRadius: 10, borderTopRightRadius: 10 }
-                                            ]}>{item.message}</Text>
+                                            {item.type === 'image' ? (
+                                                <Image source={{ uri: item.message }} style={styles.messageImage} />
+                                            ) : (
+                                                <Text style={[styles.messageText,
+                                                item.sender === 'customer' && { backgroundColor: 'grey' },
+                                                item.isLast && { borderTopRightRadius: 10 },
+                                                item.isFirst && { borderBottomRightRadius: 10 },
+                                                !group.isOneOfGroup && !item.isFirst && !item.isLast && { borderBottomRightRadius: 10, borderTopRightRadius: 10 }
+                                                ]}>{item.message}</Text>
+                                            )}
                                         </TouchableOpacity>
                                     </View>
                                 )}
-                                {visibleTimestamps[item._id] && (
-                                    <Text style={styles.timestamp}>{new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-                                )}
+
+                                <Text style={styles.timestamp}>{new Date(item.timestamp).toLocaleTimeString('th-TH', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false
+                                })}</Text>
+
                             </View>
                         ))}
                     </View>
                 ))}
             </ScrollView>
+            <View>
+                {selectedImage && (
+                    <View style={styles.imagePreviewContainer}>
+                        <Image source={{ uri: selectedImage }} style={styles.previewImage} />
+                        <TouchableOpacity onPress={removeImage} style={styles.removeImageButton}>
+                            <Ionicons name="close-circle" size={30} color="red" />
+                        </TouchableOpacity>
+                    </View>
+                )}
+            </View>
             <View style={styles.sendChatContainer}>
+
+                <TouchableOpacity onPress={pickImage} style={styles.pickImageButton}>
+                    <Ionicons name="image" size={24} color="gray" />
+                </TouchableOpacity>
+
                 <TextInput
                     style={styles.input}
                     placeholder="Aa"
@@ -193,9 +247,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingBottom: 70,
+        padding: 10
     },
     messageContainer: {
-        alignSelf: 'flex-end',
+        alignSelf: 'flex-start',
         maxWidth: '80%',
     },
     senderName: {
@@ -214,7 +269,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     timestamp: {
-        fontSize: 10,
+        fontSize: 13,
         color: 'gray',
         textAlign: 'right',
     },
@@ -276,27 +331,41 @@ const styles = StyleSheet.create({
     },
     showReadIt: {
         flexDirection: 'row',
-        alignItems: 'flex-end' 
+        alignItems: 'flex-end'
     },
     IsReadIt: {
     },
     ReadText: {
         textAlign: 'center',
         fontSize: 12,
-        color:'#999999'
-    }, header: {
-        height: 109,
-        borderBottomLeftRadius: 10,
-        borderBottomRightRadius: 10,
+        color: '#999999'
+    },
+    imagePreviewContainer: {
         flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: 10,
+    },
+    previewImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 5,
+        marginRight: 5,
+    },
+    removeImageButton: {
 
-    }, headerTitle: {
-        color: 'white',
-        fontSize: 36,
-        fontWeight: 'bold',
-        marginLeft: 20,
-        marginTop: 45,
-
+        backgroundColor: 'white',
+        borderRadius: 10,
+    },
+    pickImageButton: {
+        marginTop: 10
+    },
+    messageImage: {
+        width: 200,
+        height: 200,
+        borderRadius: 10, 
+        marginVertical: 5,
+        alignSelf: 'center'
     }
 });
 

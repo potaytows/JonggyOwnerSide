@@ -65,6 +65,7 @@ const OrderListScreen = ({ route, navigation }) => {
             ]
         );
     };
+    
 
     return (
         <View style={styles.container}>
@@ -85,7 +86,7 @@ const OrderListScreen = ({ route, navigation }) => {
                     <Text>โต๊ะ: {reservation.reservedTables.map(table => table.text).join(', ')}</Text>
 
                     <Text>สถานะ:
-                        {(!reservation.payment || reservation.payment.length === 0)
+                        {(!reservation.Payment || reservation.Payment.length === 0)
                             ? "รอการจ่ายเงิน"
                             : reservation.status}
                     </Text>
@@ -113,7 +114,7 @@ const OrderListScreen = ({ route, navigation }) => {
                                     ))}
                                 </View>
                                 <View style={styles.MenuLi3}>
-                                    <Text style={styles.Count}>8</Text>
+                                    <Text style={styles.Count}>{order.Count}</Text>
                                 </View>
                                 <View style={styles.MenuLi4}>
                                     <Text style={styles.totalPrice}>฿{order.totalPrice}</Text>

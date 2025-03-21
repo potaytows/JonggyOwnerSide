@@ -168,9 +168,9 @@ const LocationScreen = ({ route, navigation }) => {
                     </View>
                 </View>
                 
-                {reservation.status === 'ยืนยันแล้ว' && (
+                {reservation.status === 'ยืนยันแล้ว'  && (
                     <View>
-                        {location && (
+                        {location && reservation.statusLocation === 'showLocation'&&(
                             <MapView
                                 style={styles.map}
                                 initialRegion={{
