@@ -29,6 +29,8 @@ const EditRestaurantScreen = ({ route, navigation }) => {
     const [newDescription, setNewDescription] = useState("");
     const [newopen, setNewOpen] = useState(0);
     const [newClose, setNewClose] = useState(0);
+    const [newGapTime, setNewGapTime] = useState(0);
+    const [gapTime, setGapTime] = useState(0);
     const [text, setText] = useState("");
     const [description, setDescription] = useState("");
     const hours = Array.from({ length: 25 }, (_, i) => i);
@@ -67,11 +69,15 @@ const EditRestaurantScreen = ({ route, navigation }) => {
             setCloseTime(parseInt(closeHour));
             setNewOpen(parseInt(openHour));
             setNewClose(parseInt(closeHour));
+            setGapTime(parseInt(result.reservationGap))
+            setNewGapTime(parseInt(result.reservationGap))
+
         } catch (error) {
             console.error(error);
         }
     };
     const fetchEditRestaurant = async () => {
+        console.log(restaurant.reservationGap)
         if (isUploaded) {
             try {
                 const uploadResult = await FileSystem.uploadAsync(apiheader + '/restaurants/uploadImage/' + restaurant._id, image.uri, {
@@ -106,6 +112,13 @@ const EditRestaurantScreen = ({ route, navigation }) => {
             } catch (error) {
                 console.error(error);
             }
+        }else if(newGapTime!=restaurant.reservationGap){
+            console.log("here")
+            try {
+                const res = await axios.post(apiheader + '/restaurants/editDetails/' + restaurant._id, { reservationGap: newGapTime });
+            } catch (error) {
+                console.error(error);
+            }
         }
         getRestaurantbyUsername();
     };
@@ -123,25 +136,7 @@ const EditRestaurantScreen = ({ route, navigation }) => {
         }, [])
     );
 
-    const handleSubmit = async () => {
 
-        try {
-            const response = await axios.post(`${apiheader}/tables/checkconflictedreservedTables`, {
-                restaurant_id: route.params.restaurantId,
-                reservedTables: route.params.selectedTables,
-                startTime: fullStartTime,
-                endTime: fullEndTime,
-            });
-
-            if (response.status === 200) {
-
-            }
-        } catch (error) {
-            Alert.alert(
-                error.response?.status === 409 ? "กรุณาเลือกเวลาอื่น มีเวลาที่ซ้ำกัน." : "เกิดข้อผิดพลาด กรุณาลองใหม่"
-            );
-        }
-    };
     const availableCloseTimes = newopen !== null ? hours.filter(hour => hour > newopen) : hours;
     return (
         <View style={{ flex: 1 }}>
@@ -156,7 +151,7 @@ const EditRestaurantScreen = ({ route, navigation }) => {
                 <Text style={styles.headerTitle}>
                     แก้ไขข้อมูลร้าน
                 </Text>
-                {isUploaded || NewRestaurantName != restaurant.restaurantName || newDescription != restaurant.description || newClose != closeTime || newopen != openTime ? (
+                {isUploaded || NewRestaurantName != restaurant.restaurantName || newDescription != restaurant.description || newClose != closeTime || newopen != openTime||gapTime!=newGapTime ? (
                     <TouchableOpacity style={{ flex: 1, flexDirection: 'row-reverse' }}
                         onPress={() => Alert.alert('ยืนยันการแก้ไขข้อมูล', 'คุณต้องการแก้ใขข้อมูลหรือไม่ ', [
                             {
@@ -260,6 +255,13 @@ const EditRestaurantScreen = ({ route, navigation }) => {
                         <Picker selectedValue={newClose} onValueChange={(itemValue) => setNewClose(itemValue)}>
                             {availableCloseTimes.map((hour) => (
                                 <Picker.Item key={hour} label={`${hour}:00`} value={hour} />
+                            ))}
+                        </Picker>
+                        <Text>ต้องจองอย่างน้อย:</Text>
+                        <Picker selectedValue={newGapTime} onValueChange={(itemValue) => setNewGapTime(itemValue)}>
+                            {/* Loop from 1 to 5 */}
+                            {Array.from({ length: 5 }, (_, index) => index + 1).map((hour) => (
+                                <Picker.Item key={hour} label={`${hour} ชั่วโมง`} value={hour} />
                             ))}
                         </Picker>
                     </View>

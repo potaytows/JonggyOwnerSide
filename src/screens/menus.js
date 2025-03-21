@@ -57,7 +57,7 @@ const Menus = ({ navigation }) => {
                             onPress={() => navigation.dispatch(CommonActions.goBack())} />
                     </View>
                     <Text style={styles.headerTitle}>
-                        เมนูอาหาร
+                        แก้ไขเมนูอาหาร
                     </Text>
                 </LinearGradient>
             <View style={styles.loadingindi}>
@@ -90,8 +90,8 @@ const Menus = ({ navigation }) => {
 
                                     <View style={styles.flatlist}>
                                         <Image
-                                            width={70}
-                                            height={70}
+                                            width={100}
+                                            height={100}
                                             source={{ uri: `${apiheader}/image/getMenuIcon/${item._id}?timestamp=${new Date().getTime()}` }}
                                             borderRadius={5}
                                         />
@@ -101,7 +101,7 @@ const Menus = ({ navigation }) => {
 
                                     </View>
                                     <Text style={styles.menuPrice}>
-                                        ฿{item.price}
+                                        {item.price} ฿
                                     </Text>
 
                                 </TouchableOpacity>
@@ -121,7 +121,6 @@ const styles = StyleSheet.create({
     layoutmenuList: {
         backgroundColor: 'white',
         marginTop: 10,
-        padding: 15,
         marginLeft:20,
         marginRight:20,
         borderRadius:10,
@@ -131,8 +130,8 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.23,
         shadowRadius: 2.62,
-
         elevation: 5,
+        height:100
     },
     flatlist: {
         flexDirection: "row",
@@ -178,7 +177,8 @@ const styles = StyleSheet.create({
         textAlign: 'right',
         flex: 1,
         fontSize:16,
-        color:'#ff8a24'
+        color:'#ff8a24',
+        paddingRight:10
        
     }, header: {
         height: 109,

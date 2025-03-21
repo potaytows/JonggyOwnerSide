@@ -21,7 +21,8 @@ import SupportFormScreen from '../screens/supportForm';
 import MyWalletScreen from '../screens/myWalllet';
 import BankAccountScreen from '../screens/bankAccount';
 import AddBankAccountScreen from '../screens/addBankAccount';
-
+import ListMenus from '../screens/listmenu';
+import MenuSales from '../screens/menuSales';
 const Stack = createStackNavigator();
 
 const Stacks = () => {
@@ -34,6 +35,7 @@ const Stacks = () => {
                         <Stack.Screen name="Menus" component={Menus} options={{ headerShown: false }}/>
                         <Stack.Screen name="addMenus" component={AddMenu} options={{ headerShown: false }}/>
                         <Stack.Screen name="Menu" component={Menu} options={{ headerShown: false }}/>
+                        <Stack.Screen name="ListMenu" component={ListMenus} options={{ headerShown: false }}/>
                         <Stack.Screen name="allReservations" component={AllReservations} options={{ headerShown: false }} />
                         <Stack.Screen name="orderList" component={OrderListScreen} options={{ headerShown: false }} />
                         <Stack.Screen name="location" component={LocationScreen} options={{ headerShown: false }} />
@@ -47,6 +49,7 @@ const Stacks = () => {
                         <Stack.Screen name="supportForm" component={SupportFormScreen} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
                         <Stack.Screen name="MyWallet" component={MyWalletScreen} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
                         <Stack.Screen name="bankAccount" component={BankAccountScreen} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
+                        <Stack.Screen name="MenuSales" component={MenuSales} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
                         <Stack.Screen name="AddBankAccount" component={AddBankAccountScreen} options={{ title: "Edit Restaurant Screen",headerShown:false }} />
 
 
